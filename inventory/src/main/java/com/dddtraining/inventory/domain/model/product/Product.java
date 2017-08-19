@@ -39,7 +39,8 @@ public class Product {
 
 
 
-	//*** Business logic ***//	
+
+	//*** Business logic ***//
 
 	public void changeAvailabilityStatus(AvailabilityStatus aStatus){
 		if(this.status() != aStatus){
