@@ -5,13 +5,16 @@ import com.dddtraining.inventory.domain.model.arrivage.ArrivageId;
 import com.dddtraining.inventory.domain.model.arrivage.ArrivageRepository;
 import com.dddtraining.inventory.domain.model.product.ProductId;
 import com.dddtraining.inventory.domain.model.stock.Quantity;
+import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
+@Repository
 public class MockArrivageRepository implements ArrivageRepository {
 
 
@@ -72,6 +75,10 @@ public class MockArrivageRepository implements ArrivageRepository {
         this.arrivages.add(arrivage5);
 
 
+    }
+
+    public ArrivageId nextIdentity() {
+        return new ArrivageId(UUID.randomUUID().toString().toUpperCase());
     }
 
     public void add(Arrivage anArrivage) {

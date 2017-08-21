@@ -9,11 +9,15 @@ public class RegisterProductCommand {
     private String name;
     private String description;
 
+    public RegisterProductCommand(String productId, String name, String description) {
+        this.productId = productId;
+        this.name = name;
+        this.description = description;
+    }
+
     public String productId() {
         return this.productId;
     }
-
-
 
     public String name() {
 

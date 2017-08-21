@@ -76,13 +76,14 @@ public class StockRepositoryTest {
 
 		StockRepository stockRepository = new MockStockRepository();
 
-		Collection<Stock> product1Stocks = stockRepository.allStockForProductOfId(new ProductId("PRODUCT_ID_1"));
-		Collection<Stock> product2Stocks = stockRepository.allStockForProductOfId(new ProductId("PRODUCT_ID_2"));
-		Collection<Stock> product3Stocks = stockRepository.allStockForProductOfId(new ProductId("PRODUCT_ID_3"));
+		Stock product1Stocks = stockRepository.stockForProductOfId(new ProductId("PRODUCT_ID_1"));
+		Stock product2Stocks = stockRepository.stockForProductOfId(new ProductId("PRODUCT_ID_2"));
+		Stock product3Stocks = stockRepository.stockForProductOfId(new ProductId("PRODUCT_ID_3"));
 
-		assertEquals(2, product1Stocks.size());
-		assertEquals(1, product2Stocks.size());
-		assertEquals(1, product3Stocks.size());
+		assertEquals(new ProductId("PRODUCT_ID_1"), product1Stocks.stockId());
+		assertEquals(new ProductId("PRODUCT_ID_2"), product3Stocks.stockId());
+		assertEquals(new ProductId("PRODUCT_ID_3"), product1Stocks.stockId());
+
 
 	}
 

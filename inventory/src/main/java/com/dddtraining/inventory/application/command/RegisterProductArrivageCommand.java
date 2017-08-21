@@ -11,6 +11,14 @@ public class RegisterProductArrivageCommand {
     private String description;
 
 
+    public RegisterProductArrivageCommand(String productId, String arrivageId, int quantity, BigDecimal unitPrice, String description) {
+        this.productId = productId;
+        this.arrivageId = arrivageId;
+        this.quantity = quantity;
+        this.unitPrice = unitPrice;
+        this.description = description;
+    }
+
     public String productId() {
         return this.productId;
     }

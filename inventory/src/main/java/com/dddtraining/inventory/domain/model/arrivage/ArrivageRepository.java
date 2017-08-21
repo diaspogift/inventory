@@ -7,6 +7,7 @@ import java.util.Set;
 
 public interface ArrivageRepository {
 
+    public ArrivageId nextIdentity();
     public void add(Arrivage anArrivage);
     public void remove (Arrivage anArrivage);
     public Arrivage arrivgeOfId(ArrivageId anArrivageId);

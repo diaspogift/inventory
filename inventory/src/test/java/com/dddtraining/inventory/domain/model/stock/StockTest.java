@@ -11,7 +11,6 @@ import java.util.List;
 import com.dddtraining.inventory.domain.model.common.DomainEvent;
 import com.dddtraining.inventory.domain.model.common.DomainEventPublisher;
 import com.dddtraining.inventory.domain.model.common.DomainEventSubscriber;
-import com.dddtraining.inventory.domain.model.product.ProductCreated;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,9 +20,7 @@ import com.dddtraining.inventory.domain.model.arrivage.Arrivage;
 import com.dddtraining.inventory.domain.model.arrivage.ArrivageId;
 import com.dddtraining.inventory.domain.model.product.Product;
 import com.dddtraining.inventory.domain.model.product.ProductId;
-import com.dddtraining.inventory.domain.model.stock.Quantity;
-import com.dddtraining.inventory.domain.model.stock.Stock;
-import com.dddtraining.inventory.domain.model.stock.StockId;
+
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

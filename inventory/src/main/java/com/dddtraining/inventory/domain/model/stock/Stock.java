@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.dddtraining.inventory.domain.model.arrivage.Arrivage;
+import com.dddtraining.inventory.domain.model.arrivage.NewArrivageCreated;
 import com.dddtraining.inventory.domain.model.common.DomainEventPublisher;
 import com.dddtraining.inventory.domain.model.product.ProductId;
 
@@ -41,6 +42,15 @@ public class Stock {
         this.setProductId(aProductId);
         this.setQuantity(aQuantity);
         this.setAvailability(true);
+
+		//StockCreated domain event
+
+
+		DomainEventPublisher.instance()
+				.publish(new StockCreated(
+						this.stockId(),
+						this.productId(),
+						this.quantity()));
     }
 
 	public Stock(StockId aStockId, ProductId aProductId, Quantity aQuantity, int aThreshold) {
@@ -53,10 +63,19 @@ public class Stock {
 		this.setThreshold(aThreshold);
 		this.setThesholdReached(false);
 		this.setAvailability(true);
+
+		//StockCreated domain event
+
+
+		DomainEventPublisher.instance()
+				.publish(new StockCreated(
+						this.stockId(),
+						this.productId(),
+						this.quantity()));
 	}
 
 	/*** Business logic ***/
-	private void augmentStockOf(int aValue) {
+	public void augmentStockOf(int aValue) {
 
 		this.setQuantity(this.quantity().increment(aValue));
 	}

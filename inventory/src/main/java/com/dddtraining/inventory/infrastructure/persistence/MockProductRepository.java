@@ -2,12 +2,16 @@ package com.dddtraining.inventory.infrastructure.persistence;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
+import com.dddtraining.inventory.domain.model.arrivage.ArrivageId;
 import com.dddtraining.inventory.domain.model.product.AvailabilityStatus;
 import com.dddtraining.inventory.domain.model.product.Product;
 import com.dddtraining.inventory.domain.model.product.ProductId;
 import com.dddtraining.inventory.domain.model.product.ProductRepository;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class MockProductRepository implements ProductRepository {
 
 	private Set<Product> allProducts;
@@ -37,6 +41,11 @@ public class MockProductRepository implements ProductRepository {
 		this.allProducts.add(prod2);
 		this.allProducts.add(prod3);
 
+	}
+
+	@Override
+	public ProductId nextIdentity() {
+		return new ProductId(UUID.randomUUID().toString().toUpperCase());
 	}
 
 	public void add(Product aProduct) {
