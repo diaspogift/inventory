@@ -80,9 +80,9 @@ public class StockRepositoryTest {
 		Stock product2Stocks = stockRepository.stockForProductOfId(new ProductId("PRODUCT_ID_2"));
 		Stock product3Stocks = stockRepository.stockForProductOfId(new ProductId("PRODUCT_ID_3"));
 
-		assertEquals(new ProductId("PRODUCT_ID_1"), product1Stocks.stockId());
-		assertEquals(new ProductId("PRODUCT_ID_2"), product3Stocks.stockId());
-		assertEquals(new ProductId("PRODUCT_ID_3"), product1Stocks.stockId());
+		assertEquals(new ProductId("PRODUCT_ID_1"), product1Stocks.productId());
+		assertEquals(new ProductId("PRODUCT_ID_2"), product2Stocks.productId());
+		assertEquals(new ProductId("PRODUCT_ID_3"), product3Stocks.productId());
 
 
 	}

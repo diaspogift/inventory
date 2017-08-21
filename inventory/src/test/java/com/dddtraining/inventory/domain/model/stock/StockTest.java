@@ -136,8 +136,9 @@ public class StockTest {
 
 
 
-        assertEquals(1, handledEvents.size());
-        assertEquals(handledEvents.get(0), StockThresholdReached.class);
+        assertEquals(2, handledEvents.size());
+        assertEquals(handledEvents.get(0), StockCreated.class);
+        assertEquals(handledEvents.get(1), StockThresholdReached.class);
 
     }
 
@@ -200,9 +201,10 @@ public class StockTest {
 
 
 
-        assertEquals(2, handledEvents.size());
-        assertEquals(handledEvents.get(0), StockThresholdReached.class);
-        assertEquals(handledEvents.get(1), StockEmptied.class);
+        assertEquals(3, handledEvents.size());
+        assertEquals(handledEvents.get(0), StockCreated.class);
+        assertEquals(handledEvents.get(1), StockThresholdReached.class);
+        assertEquals(handledEvents.get(2), StockEmptied.class);
 
     }
 
@@ -266,8 +268,9 @@ public class StockTest {
 
 
 
-        assertEquals(1, handledEvents.size());
-        assertEquals(handledEvents.get(0), StockThresholdReached.class);
+        assertEquals(2, handledEvents.size());
+        assertEquals(handledEvents.get(0), StockCreated.class);
+        assertEquals(handledEvents.get(1), StockThresholdReached.class);
 
     }
 
