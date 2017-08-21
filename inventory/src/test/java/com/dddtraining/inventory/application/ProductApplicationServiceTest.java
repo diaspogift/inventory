@@ -6,7 +6,6 @@ import com.dddtraining.inventory.application.command.DecrementProductStockComman
 import com.dddtraining.inventory.application.command.RegisterProductArrivageCommand;
 import com.dddtraining.inventory.application.command.RegisterProductCommand;
 import com.dddtraining.inventory.domain.model.arrivage.Arrivage;
-import com.dddtraining.inventory.domain.model.arrivage.ArrivageId;
 import com.dddtraining.inventory.domain.model.arrivage.ArrivageRepository;
 import com.dddtraining.inventory.domain.model.product.Product;
 import com.dddtraining.inventory.domain.model.product.ProductId;
@@ -14,7 +13,6 @@ import com.dddtraining.inventory.domain.model.product.ProductRepository;
 import com.dddtraining.inventory.domain.model.stock.Quantity;
 import com.dddtraining.inventory.domain.model.stock.Stock;
 import com.dddtraining.inventory.domain.model.stock.StockRepository;
-import com.dddtraining.inventory.infrastructure.persistence.MockProductRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +23,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Set;
 
 @RunWith(SpringRunner.class)
