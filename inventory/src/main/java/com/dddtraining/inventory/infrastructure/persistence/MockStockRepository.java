@@ -1,4 +1,4 @@
-package com.dddtraining.inventory.infrastructure;
+package com.dddtraining.inventory.infrastructure.persistence;
 
 import java.util.HashSet;
 import java.util.Set;

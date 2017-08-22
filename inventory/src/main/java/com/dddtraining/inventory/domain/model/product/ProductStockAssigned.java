@@ -1,27 +1,25 @@
-package com.dddtraining.inventory.domain.model.stock;
+package com.dddtraining.inventory.domain.model.product;
 
 import com.dddtraining.inventory.domain.model.common.DomainEvent;
-import com.dddtraining.inventory.domain.model.product.ProductId;
+import com.dddtraining.inventory.domain.model.stock.Stock;
+import com.dddtraining.inventory.domain.model.stock.StockId;
 
 import java.time.ZonedDateTime;
 
-public class StockCreated implements DomainEvent {
+public class ProductStockAssigned implements DomainEvent{
 
-
-
-    StockId stockId;
-    ProductId productId;
-    Quantity quantity;
+    private StockId stockId;
+    private  ProductId productId;
     private ZonedDateTime occurredOn;
-    int eventVersion;
+    private int eventVersion;
 
-    public StockCreated(StockId stockId, ProductId productId, Quantity quantity) {
+    public ProductStockAssigned(StockId stockId, ProductId productId) {
         this.stockId = stockId;
         this.productId = productId;
-        this.quantity = quantity;
-        this.occurredOn = ZonedDateTime.now();
         this.eventVersion = 1;
+        this.occurredOn = ZonedDateTime.now();
     }
+
 
     public StockId stockId() {
         return stockId;
@@ -29,10 +27,6 @@ public class StockCreated implements DomainEvent {
 
     public ProductId productId() {
         return productId;
-    }
-
-    public Quantity quantity() {
-        return quantity;
     }
 
     public int eventVersion() {
@@ -43,17 +37,13 @@ public class StockCreated implements DomainEvent {
         return this.occurredOn;
     }
 
-
     @Override
     public String toString() {
-        return "StockCreated{" +
+        return "ProductStockAssigned{" +
                 "stockId=" + stockId +
                 ", productId=" + productId +
-                ", quantity=" + quantity +
                 ", occurredOn=" + occurredOn +
                 ", eventVersion=" + eventVersion +
                 '}';
     }
-
-
 }

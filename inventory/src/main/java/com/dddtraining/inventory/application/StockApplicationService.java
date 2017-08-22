@@ -1,23 +1,34 @@
 package com.dddtraining.inventory.application;
 
 import com.dddtraining.inventory.application.command.CreateStockCommand;
+import com.dddtraining.inventory.application.command.RegisterNewStockProductArrivageCommand;
+import com.dddtraining.inventory.domain.model.arrivage.Arrivage;
+import com.dddtraining.inventory.domain.model.arrivage.ArrivageId;
 import com.dddtraining.inventory.domain.model.common.DomainEventPublisher;
 import com.dddtraining.inventory.domain.model.common.DomainEventSubscriber;
+import com.dddtraining.inventory.domain.model.product.Product;
 import com.dddtraining.inventory.domain.model.product.ProductId;
 import com.dddtraining.inventory.domain.model.product.ProductRepository;
 import com.dddtraining.inventory.domain.model.stock.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @Service
 public class StockApplicationService {
 
     @Autowired
-    StockRepository stockRepository;
+    private StockRepository stockRepository;
     @Autowired
-    ProductRepository productRepository;
+    private ProductRepository productRepository;
+    @Autowired
+    private JmsTemplate jmsTemplate;
 
 
     @Transactional(readOnly = true)
@@ -40,8 +51,12 @@ public class StockApplicationService {
                     @Override
                     public void handleEvent(StockCreated aDomainEvent) {
 
-                        //TODO the event will be handled here!
-                        System.out.println("\n\n\n Event "+aDomainEvent.toString()+"\n\n");
+                        Map<String, String> message = new HashMap<String, String>();
+
+                        message.put("productId", aDomainEvent.productId().id());
+                        message.put("stockId", aDomainEvent.stockId().id());
+
+                        jmsTemplate.convertAndSend("STOCK_CREATED_QUEUE",message);
                     }
 
                     @Override
@@ -68,9 +83,39 @@ public class StockApplicationService {
     }
 
 
+     public void addProductArrivageToStock(RegisterNewStockProductArrivageCommand aCommand){
+
+         Product product =
+                 this.productRepository()
+                 .productOfId(
+                         new ProductId(
+                                 aCommand.productId()));
+
+        Stock stock =
+                this.stockRepository()
+                .stockOfId(product.stockId());
+
+
+        if(stock != null){
+
+            stock.addNewStockProductArrivage(
+                    new Arrivage(
+                            new ProductId(aCommand.productId()),
+                            new ArrivageId(aCommand.arrivageId()),
+                            new Quantity(aCommand.quantity()),
+                            aCommand.unitPrice(),
+                            aCommand.description()
+                    )
+            );
+        }
+     }
+
 
     private StockRepository stockRepository() {
         return this.stockRepository;
     }
 
+    public ProductRepository productRepository() {
+        return this.productRepository;
+    }
 }

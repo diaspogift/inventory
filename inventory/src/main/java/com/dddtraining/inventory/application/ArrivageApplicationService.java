@@ -27,7 +27,8 @@ public class ArrivageApplicationService {
 
     public Arrivage arrivage(String andArrivageId){
 
-        Arrivage arrivage = this.arrivageRepository()
+        Arrivage arrivage =
+                this.arrivageRepository()
                 .arrivgeOfId(new ArrivageId(
                         andArrivageId
                 ));
@@ -35,6 +36,7 @@ public class ArrivageApplicationService {
         return  arrivage;
 
     }
+
 
     private ArrivageRepository arrivageRepository() {
         return this.arrivageRepository;

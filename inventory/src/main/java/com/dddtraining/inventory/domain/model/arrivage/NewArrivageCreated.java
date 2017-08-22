@@ -32,6 +32,30 @@ public class NewArrivageCreated implements DomainEvent {
 		this.eventVersion = 1;
 	}
 
+	public ArrivageId arrivageId() {
+		return arrivageId;
+	}
+
+	public ProductId productId() {
+		return productId;
+	}
+
+	public Quantity quantity() {
+		return quantity;
+	}
+
+	public BigDecimal unitPrice() {
+		return unitPrice;
+	}
+
+	public String description() {
+		return description;
+	}
+
+	public LifeSpanTime lifeSpanTime() {
+		return lifeSpanTime;
+	}
+
 	public int eventVersion() {
 		return this.eventVersion;
 	}
@@ -39,6 +63,7 @@ public class NewArrivageCreated implements DomainEvent {
 	public ZonedDateTime occurredOn() {
 		return this.occurredOn;
 	}
+
 
 
 	@Override

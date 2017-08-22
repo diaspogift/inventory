@@ -48,4 +48,9 @@ public class ArrivageId {
 				"id='" + id + '\'' +
 				'}';
 	}
+
+    public String id() {
+
+		return this.id;
+    }
 }

@@ -1,4 +1,4 @@
-package com.dddtraining.inventory.infrastructure;
+package com.dddtraining.inventory.infrastructure.persistence;
 
 import com.dddtraining.inventory.domain.model.arrivage.Arrivage;
 import com.dddtraining.inventory.domain.model.arrivage.ArrivageId;

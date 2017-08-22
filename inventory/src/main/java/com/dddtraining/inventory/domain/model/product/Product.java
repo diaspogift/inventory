@@ -98,6 +98,30 @@ public class Product {
 		return stock;
 	}
 
+	public void assignStock(Stock aStock){
+
+		if(this.hasNoStock()){
+			this.setStockId(aStock.stockId());
+			this.elevateAvailabilityStatus(AvailabilityStatus.STOCK_PROVIDED);
+
+			DomainEventPublisher.instance()
+					.publish(
+							new ProductStockAssigned(
+									aStock.stockId(),
+									this.productId()
+							)
+					);
+		}
+	}
+
+	private void elevateAvailabilityStatus(AvailabilityStatus anAvailabilityStatus) {
+		this.setStatus(anAvailabilityStatus);
+	}
+
+	private boolean hasNoStock() {
+
+		return this.stockId() == null;
+	}
 
 
 	//*** Getters and Setters ***//
@@ -151,8 +175,6 @@ public class Product {
 	public AvailabilityStatus status() {
 		return this.status;
 	}
-	
-
 
 
 	public String description() {

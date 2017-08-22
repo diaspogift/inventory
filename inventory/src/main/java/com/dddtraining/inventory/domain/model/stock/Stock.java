@@ -255,5 +255,17 @@ public class Stock {
 	}
 
 
-
+	@Override
+	public String toString() {
+		return "Stock{" +
+				"stockId=" + stockId +
+				", productId=" + productId +
+				", quantity=" + quantity +
+				", threshold=" + threshold +
+				", dateStockThresholdReached=" + dateStockThresholdReached +
+				", availability=" + availability +
+				", stockProductArrivages=" + stockProductArrivages +
+				", isThesholdReached=" + isThesholdReached +
+				'}';
+	}
 }
