@@ -91,6 +91,7 @@ public class Stock {
 		this.setQuantity(this.quantity().decrement(aQuantityToClear));
 
 		// Raise Domain event
+
 		if(this.isThresholdReached(actualQuantity, new Quantity(aQuantityToClear))){
 
             this.setThesholdReached(true);
