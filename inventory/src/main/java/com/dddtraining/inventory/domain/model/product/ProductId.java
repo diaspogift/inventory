@@ -1,5 +1,5 @@
 package com.dddtraining.inventory.domain.model.product;
-
+//
 public final class ProductId {
 
 	private String id;
