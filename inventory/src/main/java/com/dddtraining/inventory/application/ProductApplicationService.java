@@ -64,6 +64,7 @@ public class ProductApplicationService {
                     @Override
                     public void handleEvent(ProductCreated aDomainEvent) {
 
+                        System.out.println("\n\n\n HERE MY EVENT"+ aDomainEvent);
 
 
                         Map<String, String> message = new HashMap<String, String>();
@@ -94,6 +95,10 @@ public class ProductApplicationService {
 
         ProductId productId = new ProductId(aCommand.productId());
 
+        System.out.println(" \n\n HERE IS MY PRODUCT ID "+aCommand.productId());
+        System.out.println(" \n\n HERE IS MY PRODUCT ID "+aCommand.productId());
+        System.out.println(" \n\n HERE IS MY PRODUCT ID "+aCommand.productId());
+
         this.productRepository()
                 .add(new Product(
                         productId,
@@ -112,12 +117,12 @@ public class ProductApplicationService {
 
 
                         System.out.println("\n\n\n HERE MY EVENT"+ aDomainEvent);
-                        System.out.println("\n\n\n HERE MY EVENT"+ aDomainEvent);
 
                         Map<String, String> message = new HashMap<String, String>();
 
                         message.put("arrivageId", aDomainEvent.arrivageId().id());
                         message.put("productId", aDomainEvent.productId().id());
+                        message.put("stockId", aDomainEvent.stockId().id());
                         message.put("quantity", String.valueOf(aDomainEvent.quantity().value()));
                         message.put("unitPrice", String.valueOf(aDomainEvent.unitPrice()));
                         message.put("description", aDomainEvent.description());
@@ -144,6 +149,7 @@ public class ProductApplicationService {
                             aCommand.productId()
                     ));
 
+        System.out.println("HEREEEEEEEEEEEEE in addProductArrivage ProdApplicationService\n\n\n "+product.toString());
 
         Arrivage productArrivage =
                 product.createNewArrivage(
@@ -151,6 +157,8 @@ public class ProductApplicationService {
                         new Quantity(aCommand.quantity()),
                         aCommand.unitPrice(),
                         aCommand.description());
+
+        System.out.println("HEREEEEEEEEEEEEE  in addProductArrivage ProdApplicationService \n\n\n "+productArrivage.toString());
 
         this.arrivageRepository().add(productArrivage);
 
@@ -167,8 +175,7 @@ public class ProductApplicationService {
                     @Override
                     public void handleEvent(StockThresholdReached aDomainEvent) {
 
-                        //TODO the event will be handled here!
-                        System.out.println("\n\n\n Event "+aDomainEvent.toString()+"\n\n");
+                        System.out.println("\n\n\n HERE MY EVENT "+aDomainEvent.toString()+"\n\n");
                     }
 
                     @Override
@@ -230,13 +237,18 @@ public class ProductApplicationService {
     public void assignedStockToProduct(AssignedStockCommand aCommand){
 
 
+        System.out.println("\n\n\n AssignedStockCommand  = "+ aCommand.toString());
+
+
         DomainEventSubscriber<ProductStockAssigned> subscriber =
                 new DomainEventSubscriber<ProductStockAssigned>() {
                     @Override
                     public void handleEvent(ProductStockAssigned aDomainEvent) {
 
 
-                        System.out.println("\n\n\n HERE MY EVENT"+ aDomainEvent.toString());
+                        System.out.println("\n\n\n HERE MY EVENT  "+ aDomainEvent.toString());
+
+
 
                         Map<String, String> message = new HashMap<String, String>();
 
@@ -255,6 +267,8 @@ public class ProductApplicationService {
 
         DomainEventPublisher.instance().subscribe(subscriber);
 
+
+
         Product product =
                 this.productRepository()
                 .productOfId(
@@ -265,8 +279,13 @@ public class ProductApplicationService {
                 .stockOfId(
                         new StockId(aCommand.stockId()));
 
+        if(stock != null){
+            product.assignStock(stock);
+        }
 
-        product.assignStock(stock);
+
+        System.out.println("HERE IS MY PRODUCT in assignedStockToProduct \n\n"+product.toString());
+
 
     }
 
@@ -284,6 +303,13 @@ public class ProductApplicationService {
 
 
 
+    public Stock testReturnObject(){
+
+        return new Stock(
+                new StockId("sttt"),
+                new ProductId("ppp")
+        );
+    }
 
     private StockRepository stockRepository() {
         return this.stockRepository;

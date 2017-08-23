@@ -5,6 +5,7 @@ import com.dddtraining.inventory.domain.model.arrivage.ArrivageId;
 import com.dddtraining.inventory.domain.model.arrivage.ArrivageRepository;
 import com.dddtraining.inventory.domain.model.product.ProductId;
 import com.dddtraining.inventory.domain.model.stock.Quantity;
+import com.dddtraining.inventory.domain.model.stock.StockId;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
@@ -27,6 +28,7 @@ public class MockArrivageRepository implements ArrivageRepository {
         Arrivage arrivage1 =
                 new Arrivage(
                         new ProductId("PR12345"),
+                        new StockId("STOCK_1"),
                         new ArrivageId("ARR12345"),
                         new Quantity(1000),
                         new BigDecimal(500),
@@ -36,6 +38,7 @@ public class MockArrivageRepository implements ArrivageRepository {
         Arrivage arrivage2 =
                 new Arrivage(
                         new ProductId("PR12345"),
+                        new StockId("STOCK_1"),
                         new ArrivageId("ARR12346"),
                         new Quantity(50),
                         new BigDecimal(550),
@@ -45,6 +48,7 @@ public class MockArrivageRepository implements ArrivageRepository {
         Arrivage arrivage3 =
                 new Arrivage(
                         new ProductId("PR12346"),
+                        new StockId("STOCK_1"),
                         new ArrivageId("ARR12347"),
                         new Quantity(25),
                         new BigDecimal(50000),
@@ -53,6 +57,7 @@ public class MockArrivageRepository implements ArrivageRepository {
         Arrivage arrivage4 =
                 new Arrivage(
                         new ProductId("PR12347"),
+                        new StockId("STOCK_1"),
                         new ArrivageId("ARR12348"),
                         new Quantity(10000),
                         new BigDecimal(350),
@@ -61,6 +66,7 @@ public class MockArrivageRepository implements ArrivageRepository {
         Arrivage arrivage5 =
                 new Arrivage(
                         new ProductId("PR12347"),
+                        new StockId("STOCK_1"),
                         new ArrivageId("ARR12349"),
                         new Quantity(5000),
                         new BigDecimal(360.50),

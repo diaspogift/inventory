@@ -35,9 +35,31 @@ public class Product {
                         this.description(),
                         AvailabilityStatus.CREATED
                 ));
+
+
+
 	}
 
+	public Product(ProductId aProductId, StockId aStockId, String aName, String aDescription) {
 
+		this();
+		this.setProductId(aProductId);
+		this.setStockId(aStockId);
+		this.setName(aName);
+		this.setDescription(aDescription);
+		this.setStatus(AvailabilityStatus.CREATED);
+
+		//ProductCreated domain event
+
+		DomainEventPublisher
+				.instance()
+				.publish(new ProductCreated(
+						this.productId(),
+						this.name(),
+						this.description(),
+						AvailabilityStatus.CREATED
+				));
+	}
 
 
 	//*** Business logic ***//
@@ -49,10 +71,20 @@ public class Product {
 	}
 
 	public Arrivage createNewArrivage(ArrivageId anArrivageId, Quantity aQuantity, BigDecimal aUnitPrice, String aDescription){
-		
+
+		System.out.println("\n\nIn create arrivage stockId ==== "+this.stockId());
+		System.out.println("\n\nIn create arrivage stockId ==== "+this.stockId());
+		System.out.println("\n\nIn create arrivage stockId ==== "+this.stockId());
+		System.out.println("\n\nIn create arrivage stockId ==== "+this.stockId());
+
+		if(this.hasNoStock()){
+			throw  new IllegalStateException("Invalid state");
+		}
+
 		Arrivage arrivage = 
 				new Arrivage(
 						this.productId(),
+					    this.stockId(),
 					    anArrivageId, 
 						aQuantity,
 						aUnitPrice, 
@@ -63,8 +95,10 @@ public class Product {
 
         DomainEventPublisher
                 .instance()
-                .publish(new NewArrivageCreated(
+                .publish(
+                		new NewArrivageCreated(
                         this.productId(),
+								this.stockId(),
                         anArrivageId,
                         aQuantity,
                         aUnitPrice,
@@ -74,7 +108,7 @@ public class Product {
 		
 		
 		return arrivage;
-	}
+}
 
 
 	
@@ -120,7 +154,11 @@ public class Product {
 
 	private boolean hasNoStock() {
 
-		return this.stockId() == null;
+		if(this.stockId() == null )
+			return true;
+		else
+			return false;
+
 	}
 
 
@@ -128,6 +166,9 @@ public class Product {
 	private void setProductId(ProductId aProductId) {
 
 		if (aProductId == null) {
+			System.out.println( this.stockId() == null );
+
+
 			throw new IllegalArgumentException("Invalid ProductId provided");
 		}
 		this.productId = aProductId;
@@ -217,9 +258,14 @@ public class Product {
 	}
 
 
-
-
-
-
-
+	@Override
+	public String toString() {
+		return "Product{" +
+				"productId=" + productId +
+				", stockId=" + stockId +
+				", name='" + name + '\'' +
+				", description='" + description + '\'' +
+				", status=" + status +
+				'}';
+	}
 }

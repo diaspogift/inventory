@@ -95,17 +95,7 @@ public class MockStockRepository implements StockRepository {
         return result;
 	}
 
-	public Set<Stock> allStockForProductOfId(ProductId aProductId) {
-		
-		Set<Stock> result = new HashSet<Stock>();
-		
-		for(Stock nextStock : allStocks){
-			if(nextStock.productId().equals(aProductId)){
-				result.add(nextStock);
-			}
-		}
-		return result;
-	}
+
 
 	public Set<Stock> allAvailableStock() {
 		

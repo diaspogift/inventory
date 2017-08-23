@@ -27,7 +27,7 @@ public class RegisterNewStockProductArrivageCommand {
 
 
     public String stockId() {
-        return stockId;
+        return this.stockId;
     }
 
     public String description() {
@@ -49,5 +49,18 @@ public class RegisterNewStockProductArrivageCommand {
 
     public String productId() {
         return this.productId;
+    }
+
+
+    @Override
+    public String toString() {
+        return "RegisterNewStockProductArrivageCommand{" +
+                "stockId='" + stockId + '\'' +
+                ", description='" + description + '\'' +
+                ", unitPrice=" + unitPrice +
+                ", quantity=" + quantity +
+                ", arrivageId='" + arrivageId + '\'' +
+                ", productId='" + productId + '\'' +
+                '}';
     }
 }

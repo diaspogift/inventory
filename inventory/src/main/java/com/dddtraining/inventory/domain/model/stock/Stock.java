@@ -42,8 +42,10 @@ public class Stock {
         this.setProductId(aProductId);
         this.setQuantity(aQuantity);
         this.setAvailability(true);
+        this.setStockProductArrivages(new HashSet<StockProductArrivage>());
 
-		//StockCreated domain event
+
+        //StockCreated domain event
 
 
 		DomainEventPublisher.instance()
@@ -63,8 +65,10 @@ public class Stock {
 		this.setThreshold(aThreshold);
 		this.setThesholdReached(false);
 		this.setAvailability(true);
+        this.setStockProductArrivages(new HashSet<StockProductArrivage>());
 
-		//StockCreated domain event
+
+        //StockCreated domain event
 
 
 		DomainEventPublisher.instance()

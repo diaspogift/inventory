@@ -4,6 +4,7 @@ import com.dddtraining.inventory.domain.model.arrivage.Arrivage;
 import com.dddtraining.inventory.domain.model.arrivage.ArrivageId;
 import com.dddtraining.inventory.domain.model.product.ProductId;
 import com.dddtraining.inventory.domain.model.stock.Quantity;
+import com.dddtraining.inventory.domain.model.stock.StockId;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,6 +26,7 @@ public class ArrivageTest {
         Arrivage arrivage =
                 new Arrivage(
                         new ProductId("PR12345"),
+                        new StockId("STOCK_ID_2"),
                         new ArrivageId("ARR12345"),
                         new Quantity(0),
                         new BigDecimal(500),
@@ -46,6 +48,7 @@ public class ArrivageTest {
         Arrivage arrivage =
                 new Arrivage(
                         new ProductId("PR12345"),
+                        new StockId("STOCK_ID_2"),
                         new ArrivageId("ARR12345"),
                         new Quantity(0),
                         new BigDecimal(500),
@@ -65,6 +68,7 @@ public class ArrivageTest {
         Arrivage arrivage =
                 new Arrivage(
                         new ProductId("PR12345"),
+                        new StockId("STOCK_ID_2"),
                         new ArrivageId("ARR12345"),
                         new Quantity(1000),
                         new BigDecimal(500),

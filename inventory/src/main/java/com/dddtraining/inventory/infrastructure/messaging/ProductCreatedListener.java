@@ -33,16 +33,6 @@ public class ProductCreatedListener {
 
         StockId stockId = stockRepository.nextIdentity();
 
-        Set<Stock> allStocks = this.stockRepository.allStocks();
-
-
-        System.out.println(allStocks.size() +"  Stock Repo before \n\n");
-
-        for(Stock nextStock : allStocks){
-            System.out.println("\n\n"+ nextStock.toString());
-        }
-
-
 
         String productId =  mesage.get("productId");
         String name =  mesage.get("name");
@@ -52,14 +42,13 @@ public class ProductCreatedListener {
         String occurredOn = mesage.get("occurredOn");
 
 
-        System.out.println("Recieved message for ProductCreated Event \n\n");
+        System.out.println("\n Recieved message for ProductCreated Event");
         System.out.println("productId = "+productId);
         System.out.println("name = "+name);
         System.out.println("description = "+description);
         System.out.println("status = "+status);
         System.out.println("enventVersion = "+enventVersion);
         System.out.println("occurredOn = "+occurredOn);
-        System.out.println("\n\n");
 
 
 
@@ -71,15 +60,6 @@ public class ProductCreatedListener {
                         productId,
                                 0
                 ));
-
-      allStocks = this.stockRepository.allStocks();
-
-
-        System.out.println(allStocks.size() +" Stock Repo after \n\n");
-
-        for(Stock nextStock : allStocks){
-            System.out.println("\n\n"+ nextStock.toString());
-        }
 
     }
 

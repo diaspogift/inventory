@@ -68,7 +68,12 @@ public class StockProductArrivage {
 	}
 
 
-
-
-
+	@Override
+	public String toString() {
+		return "StockProductArrivage{" +
+				"arrivageId=" + arrivageId +
+				", productId=" + productId +
+				", lifeSpanTime=" + lifeSpanTime +
+				'}';
+	}
 }

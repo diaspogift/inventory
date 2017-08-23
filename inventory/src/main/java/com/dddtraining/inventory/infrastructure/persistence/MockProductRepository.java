@@ -9,6 +9,7 @@ import com.dddtraining.inventory.domain.model.product.AvailabilityStatus;
 import com.dddtraining.inventory.domain.model.product.Product;
 import com.dddtraining.inventory.domain.model.product.ProductId;
 import com.dddtraining.inventory.domain.model.product.ProductRepository;
+import com.dddtraining.inventory.domain.model.stock.StockId;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -22,8 +23,11 @@ public class MockProductRepository implements ProductRepository {
 		Product prod1 = 
 				new Product(
 						new ProductId("PRODUCT_ID_1"),
+						new StockId("STOCK_ID_1"),
 						"Petit martaux",
 						"Tres solide");
+
+
 
 		Product prod2 = 
 				new Product(

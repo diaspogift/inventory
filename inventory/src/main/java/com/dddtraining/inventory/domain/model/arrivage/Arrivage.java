@@ -19,11 +19,12 @@ public class Arrivage {
 	private LifeSpanTime lifeSpanTime;
 	
 	
-	public Arrivage(ProductId aProductId, ArrivageId anArrivageId, Quantity aQuantity, BigDecimal aUnitPrice,
-			String aDescription) {
+	public Arrivage(ProductId aProductId, StockId aStockId, ArrivageId anArrivageId, Quantity aQuantity, BigDecimal aUnitPrice,
+                    String aDescription) {
 
 		this();
 		this.setProductId(aProductId);
+		this.setStockId(aStockId);
 		this.setArrivageId(anArrivageId);
 		this.setQuantity(aQuantity);
 		this.setUnitPrice(aUnitPrice);
@@ -147,4 +148,10 @@ public class Arrivage {
                 ", lifeSpanTime=" + lifeSpanTime +
                 '}';
     }
+
+	private void setStockId(StockId stockId) {
+
+		if(this.stockId() == null)
+			this.stockId = stockId;
+	}
 }

@@ -15,9 +15,9 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 
 @Service
@@ -55,6 +55,8 @@ public class StockApplicationService {
 
                         message.put("productId", aDomainEvent.productId().id());
                         message.put("stockId", aDomainEvent.stockId().id());
+                        message.put("eventVersion", String.valueOf(aDomainEvent.eventVersion()));
+                        message.put("occurredOn", String.valueOf(aDomainEvent.occurredOn()));
 
                         jmsTemplate.convertAndSend("STOCK_CREATED_QUEUE",message);
                     }
@@ -91,9 +93,15 @@ public class StockApplicationService {
                          new ProductId(
                                  aCommand.productId()));
 
+
+         System.out.println("\n\n HERE IS MY aCommand \n\n"+aCommand.toString());
+         System.out.println("\n\n HERE IS MY PRODUCT \n\n"+product.toString());
+
+
         Stock stock =
                 this.stockRepository()
                 .stockOfId(product.stockId());
+
 
 
         if(stock != null){
@@ -101,6 +109,7 @@ public class StockApplicationService {
             stock.addNewStockProductArrivage(
                     new Arrivage(
                             new ProductId(aCommand.productId()),
+                            product.stockId(),
                             new ArrivageId(aCommand.arrivageId()),
                             new Quantity(aCommand.quantity()),
                             aCommand.unitPrice(),
@@ -108,7 +117,27 @@ public class StockApplicationService {
                     )
             );
         }
+
+         Stock stocks  =
+                 this.stockRepository()
+                         .stockForProductOfId(
+                                 new ProductId("PROD_3333"));
+
+         Set<StockProductArrivage> all =
+                 stocks.stockProductArrivages();
+
+         for(StockProductArrivage next : all){
+
+             System.out.println("\n\n StockProductArrivage "+next);
+         }
+
+
+         System.out.println("HERE IS MY PRODUCT in addProductArrivageToStock \n\n"+product.toString());
+
+
+
      }
+
 
 
     private StockRepository stockRepository() {

@@ -10,7 +10,7 @@ import com.dddtraining.inventory.domain.model.arrivage.NewArrivageCreated;
 import com.dddtraining.inventory.domain.model.common.DomainEvent;
 import com.dddtraining.inventory.domain.model.common.DomainEventPublisher;
 import com.dddtraining.inventory.domain.model.common.DomainEventSubscriber;
-import com.dddtraining.inventory.domain.model.stock.ProductStockCreated;
+import com.dddtraining.inventory.domain.model.stock.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,9 +18,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.dddtraining.inventory.domain.model.arrivage.Arrivage;
 import com.dddtraining.inventory.domain.model.arrivage.ArrivageId;
-import com.dddtraining.inventory.domain.model.stock.Quantity;
-import com.dddtraining.inventory.domain.model.stock.Stock;
-import com.dddtraining.inventory.domain.model.stock.StockId;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -173,13 +170,18 @@ public class ProductTest {
 		Product product = 
 				new Product(
 						new ProductId("P12345"),
+                        new StockId("STOCK_ID_1"),
 						"My product name", 
 						"Nails for soft walls");
 
 
 
 
-        Arrivage  arrivage = product.createNewArrivage(new ArrivageId("ARR12345"), new Quantity(10), new BigDecimal(5.5),"Ciment Dangote");
+        Arrivage  arrivage =
+                product.createNewArrivage(
+                        new ArrivageId("ARR12345"),
+                        new Quantity(10),
+                        new BigDecimal(5.5),"Ciment Dangote");
 		
 		assertEquals(product.productId(), arrivage.productId());
 

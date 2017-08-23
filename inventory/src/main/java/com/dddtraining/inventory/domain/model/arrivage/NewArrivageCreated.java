@@ -12,6 +12,7 @@ import com.dddtraining.inventory.domain.model.stock.StockId;
 public class NewArrivageCreated implements DomainEvent {
 
 
+	private StockId stockId;
 	private ArrivageId arrivageId;
 	private ProductId productId;
 	private Quantity quantity;
@@ -21,8 +22,9 @@ public class NewArrivageCreated implements DomainEvent {
 	private ZonedDateTime occurredOn;
 	int eventVersion;
 
-	public NewArrivageCreated( ProductId productId, ArrivageId arrivageId, Quantity quantity, BigDecimal unitPrice, String description, LifeSpanTime lifeSpanTime) {
+	public NewArrivageCreated(ProductId productId, StockId stockId, ArrivageId arrivageId, Quantity quantity, BigDecimal unitPrice, String description, LifeSpanTime lifeSpanTime) {
 		this.arrivageId = arrivageId;
+		this.stockId = stockId;
 		this.productId = productId;
 		this.quantity = quantity;
 		this.unitPrice = unitPrice;
@@ -34,6 +36,10 @@ public class NewArrivageCreated implements DomainEvent {
 
 	public ArrivageId arrivageId() {
 		return arrivageId;
+	}
+
+	public StockId stockId() {
+		return stockId;
 	}
 
 	public ProductId productId() {

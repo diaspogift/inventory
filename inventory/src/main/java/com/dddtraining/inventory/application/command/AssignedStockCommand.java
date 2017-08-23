@@ -21,4 +21,12 @@ public class AssignedStockCommand {
 
         return this.stockId;
     }
+
+    @Override
+    public String toString() {
+        return "AssignedStockCommand{" +
+                "productId='" + productId + '\'' +
+                ", stockId='" + stockId + '\'' +
+                '}';
+    }
 }

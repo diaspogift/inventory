@@ -135,25 +135,19 @@ public class ProductApplicationServiceTest {
                         "PRODUCT_ID_1",
                         200);
 
-        Stock stock1 =
-                this.stockRepository
-                        .stockForProductOfId(
-                                new ProductId(augmentProductStockCommand.productId()));
 
-        assertNotNull(stock1);
-        assertEquals(new Quantity(200), stock1.quantity());
 
         this.productApplicationService
                 .augmentProductStock(
                         augmentProductStockCommand);
 
-        Stock stock2 =
+        Stock stock =
                 this.stockRepository
                         .stockForProductOfId(
                                 new ProductId(augmentProductStockCommand.productId()));
 
-        assertNotNull(stock2);
-        assertEquals(new Quantity(400), stock2.quantity());
+        assertNotNull(stock);
+        assertEquals(new Quantity(400), stock.quantity());
 
 
     }
