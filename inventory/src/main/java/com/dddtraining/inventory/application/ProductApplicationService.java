@@ -77,10 +77,9 @@ public class ProductApplicationService {
                         message.put("occurredOn", aDomainEvent.occurredOn().toString());
 
 
-
-
-
                         jmsTemplate.convertAndSend("PRODUCT_CREATED_QUEUE", message);
+                        jmsTemplate.convertAndSend("CATALOG_PRODUCT_CREATED_QUEUE", message);
+
                     }
 
                     @Override
