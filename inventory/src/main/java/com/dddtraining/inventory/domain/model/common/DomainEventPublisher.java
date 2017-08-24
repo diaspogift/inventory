@@ -69,6 +69,29 @@ public class DomainEventPublisher {
         }
     }
 
+    public <T> void unSubscribe(DomainEventSubscriber<T> aSubscriber){
+
+        List<DomainEventSubscriber<T>> allSubscribers = this.subscribers();
+
+        Class<?> eventType = aSubscriber.getClass();
+        
+        DomainEventSubscriber<T> subscriber = null;
+
+
+        for(DomainEventSubscriber nextSubscriber : allSubscribers){
+
+            if(aSubscriber  == nextSubscriber){
+
+                subscriber = nextSubscriber;
+            }
+        }
+
+        this.subscribers().remove(subscriber);
+
+
+
+    }
+
     private DomainEventPublisher() {
         super();
 

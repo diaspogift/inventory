@@ -37,8 +37,18 @@ public class ArrivageApplicationService {
 
     }
 
+    public void decrementArrivageQuantityOf(String arrivageId, int quantity) {
+
+        Arrivage arrivage =
+                this.arrivageRepository()
+                .arrivgeOfId(new ArrivageId(arrivageId));
+
+        arrivage.decrementQuantityOf(quantity);
+    }
 
     private ArrivageRepository arrivageRepository() {
         return this.arrivageRepository;
     }
+
+
 }

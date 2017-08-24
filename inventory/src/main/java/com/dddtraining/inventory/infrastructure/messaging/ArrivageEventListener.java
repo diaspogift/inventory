@@ -1,10 +1,12 @@
 package com.dddtraining.inventory.infrastructure.messaging;
 
+import com.dddtraining.inventory.application.ArrivageApplicationService;
 import com.dddtraining.inventory.application.ProductApplicationService;
 import com.dddtraining.inventory.application.StockApplicationService;
 import com.dddtraining.inventory.application.command.RegisterNewStockProductArrivageCommand;
 import com.dddtraining.inventory.application.command.RegisterProductArrivageCommand;
 import com.dddtraining.inventory.domain.model.arrivage.ArrivageId;
+import com.dddtraining.inventory.domain.model.arrivage.ArrivageRepository;
 import com.dddtraining.inventory.domain.model.product.ProductId;
 import com.dddtraining.inventory.domain.model.stock.LifeSpanTime;
 import com.dddtraining.inventory.domain.model.stock.Quantity;
@@ -18,18 +20,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class NewArrivageCreatedListener {
+public class ArrivageEventListener {
 
     @Autowired
     private StockApplicationService stockApplicationService;
     @Autowired
     private ProductApplicationService productApplicationService;
+    @Autowired
+    private ArrivageApplicationService arrivageApplicationService;
 
     @JmsListener(destination = "NEW_ARRIVAGE_CREATED_QUEUE")
-    public void handleEvent(Map<String, String> mesage){
+    public void handleNewArrivageCreatedEvent(Map<String, String> mesage){
 
-
-        Map<String, String> message = new HashMap<String, String>();
 
         String stockId =  mesage.get("stockId");
         String arrivageId =  mesage.get("arrivageId");
@@ -66,16 +68,20 @@ public class NewArrivageCreatedListener {
                         arrivageId,
                         productId));
 
-        /*this.productApplicationService()
-                .addProductArrivage(
-                        new RegisterProductArrivageCommand(
-                                productId,
-                                arrivageId,
-                                new Integer(quantity),
-                                new BigDecimal(unitPrice),
-                                "ddd"
-                        )
-                );*/
+    }
+
+    @JmsListener(destination = "ARRIVAGE_QUANTITY_CHANGE_QUEUE")
+    public void handleArrivageQuantityChangedEvent(Map<String, String> message){
+
+        String arrivageId =  message.get("arrivageId");
+        int quantity =  Integer.parseInt(message.get("quantity"));
+
+        System.out.println("arrivageId = "+arrivageId);
+        System.out.println("quantity = "+quantity);
+
+        this.arrivageApplicationService()
+                .decrementArrivageQuantityOf(arrivageId, quantity);
+
     }
 
 
@@ -85,5 +91,9 @@ public class NewArrivageCreatedListener {
 
     public ProductApplicationService productApplicationService() {
         return this.productApplicationService;
+    }
+
+    public ArrivageApplicationService arrivageApplicationService() {
+        return arrivageApplicationService;
     }
 }

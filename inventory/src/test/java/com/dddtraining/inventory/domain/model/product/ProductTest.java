@@ -182,13 +182,20 @@ public class ProductTest {
                         new ArrivageId("ARR12345"),
                         new Quantity(10),
                         new BigDecimal(5.5),"Ciment Dangote");
-		
-		assertEquals(product.productId(), arrivage.productId());
+        Arrivage  arrivage2 =
+                product.createNewArrivage(
+                        new ArrivageId("ARR12346"),
+                        new Quantity(100),
+                        new BigDecimal(5.56),"Ciment Dangote new");
+
+        assertEquals(product.productId(), arrivage.productId());
+        assertEquals(product.productId(), arrivage2.productId());
 
 
-        assertEquals(2, handledEvents.size());
+        assertEquals(3, handledEvents.size());
         assertEquals(handledEvents.get(0), ProductCreated.class);
         assertEquals(handledEvents.get(1), NewArrivageCreated.class);
+        assertEquals(handledEvents.get(2), NewArrivageCreated.class);
 
 		
 	}
@@ -249,16 +256,91 @@ public class ProductTest {
 						"My product name", 
 						"Nails for soft walls");
 		
-		Stock stockForProduct = product.createStock(new StockId("ST12345"));
+		Stock stockForProduct = product.createStock(new StockId("ST12345"), 500);
 		
 		assertEquals(stockForProduct.productId(), product.productId());
-		assertEquals(stockForProduct.stockId(), product.stockId());
+        assertEquals(500,stockForProduct.threshold());
+        assertEquals(new Quantity(0), stockForProduct.quantity());
+
 
         assertEquals(2, handledEvents.size());
         assertEquals(handledEvents.get(0), ProductCreated.class);
-        assertEquals(handledEvents.get(1), ProductStockCreated.class);
+        assertEquals(handledEvents.get(1), StockCreated.class);
 
 
 
     }
+
+    @Test
+    public void testReorderFrom() throws Exception {
+
+	    Stock stock =
+                new Stock(
+                        new StockId("STOCK_ID_1"),
+                        new ProductId("PROD_ID_1")
+                );
+
+        Arrivage arrivage1 =
+                new Arrivage(
+                        new ProductId("PROD_ID_1"),
+                        new StockId("STOCK_ID_1"),
+                        new ArrivageId("ARR_ID_1"),
+                        new Quantity(100),
+                        new BigDecimal(100),
+                        "Des"
+                        );
+
+        Arrivage arrivage2 =
+                new Arrivage(
+                        new ProductId("PROD_ID_1"),
+                        new StockId("STOCK_ID_1"),
+                        new ArrivageId("ARR_ID_2"),
+                        new Quantity(100),
+                        new BigDecimal(100),
+                        "Des"
+                );
+        Arrivage arrivage3 =
+                new Arrivage(
+                        new ProductId("PROD_ID_1"),
+                        new StockId("STOCK_ID_1"),
+                        new ArrivageId("ARR_ID_3"),
+                        new Quantity(100),
+                        new BigDecimal(100),
+                        "Des"
+                );
+
+        stock.addNewStockProductArrivage(arrivage1);
+        stock.addNewStockProductArrivage(arrivage2);
+        stock.addNewStockProductArrivage(arrivage3);
+
+
+
+
+        StockProductArrivage stockProductArrivage1 = null;
+        StockProductArrivage stockProductArrivage2 = null;
+        StockProductArrivage stockProductArrivage3 = null;
+
+        for (StockProductArrivage stockProductArrivage : stock.stockProductArrivages()) {
+            if (stockProductArrivage.ordering() == 1) {
+                stockProductArrivage1 = stockProductArrivage;
+            }
+            if (stockProductArrivage.ordering() == 2) {
+                stockProductArrivage2 = stockProductArrivage;
+            }
+            if (stockProductArrivage.ordering() == 3) {
+                stockProductArrivage3 = stockProductArrivage;
+            }
+        }
+
+        stock.reorderFrom(stockProductArrivage3.arrivageId(), 1);
+
+        assertEquals(1, stockProductArrivage3.ordering());
+        assertEquals(2, stockProductArrivage1.ordering());
+        assertEquals(3, stockProductArrivage2.ordering());
+
+        assertEquals(3, stock.stockProductArrivages().size());
+
+        assertEquals(300, stock.quantity().value());
+    }
+
 }

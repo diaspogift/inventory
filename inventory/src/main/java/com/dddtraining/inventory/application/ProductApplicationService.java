@@ -94,19 +94,21 @@ public class ProductApplicationService {
 
         ProductId productId = new ProductId(aCommand.productId());
 
-        System.out.println(" \n\n HERE IS MY PRODUCT ID "+aCommand.productId());
-        System.out.println(" \n\n HERE IS MY PRODUCT ID "+aCommand.productId());
-        System.out.println(" \n\n HERE IS MY PRODUCT ID "+aCommand.productId());
+        System.out.println(" \n\n HERE IS MY PRODUCT ID TO ADD "+aCommand.productId());
 
         this.productRepository()
                 .add(new Product(
                         productId,
                         aCommand.name(),
                         aCommand.description()));
+
+
     }
 
     @Transactional
     public Arrivage addProductArrivage(RegisterProductArrivageCommand aCommand){
+
+        System.out.println("HERE in addProductArrivage ProdApplicationService aCommand\n\n\n "+aCommand.toString());
 
 
         DomainEventSubscriber<NewArrivageCreated> subscriber =
@@ -115,7 +117,7 @@ public class ProductApplicationService {
                     public void handleEvent(NewArrivageCreated aDomainEvent) {
 
 
-                        System.out.println("\n\n\n HERE MY EVENT"+ aDomainEvent);
+                        System.out.println("\n\n HERE MY EVENT"+ aDomainEvent);
 
                         Map<String, String> message = new HashMap<String, String>();
 
@@ -131,6 +133,9 @@ public class ProductApplicationService {
                         message.put("occurredOn", aDomainEvent.occurredOn().toString());
 
                         jmsTemplate.convertAndSend("NEW_ARRIVAGE_CREATED_QUEUE", message);
+
+
+
                     }
 
                     @Override
@@ -148,7 +153,6 @@ public class ProductApplicationService {
                             aCommand.productId()
                     ));
 
-        System.out.println("HEREEEEEEEEEEEEE in addProductArrivage ProdApplicationService\n\n\n "+product.toString());
 
         Arrivage productArrivage =
                 product.createNewArrivage(
@@ -157,13 +161,65 @@ public class ProductApplicationService {
                         aCommand.unitPrice(),
                         aCommand.description());
 
-        System.out.println("HEREEEEEEEEEEEEE  in addProductArrivage ProdApplicationService \n\n\n "+productArrivage.toString());
 
         this.arrivageRepository().add(productArrivage);
+
+
+        DomainEventPublisher.instance().unSubscribe(subscriber);
 
         return  productArrivage;
     }
 
+
+    @Transactional
+    public void creatProductStock(CreateProductStockCommand aCommand){
+
+        DomainEventSubscriber<StockCreated> subscriber =
+                new DomainEventSubscriber<StockCreated>() {
+                    @Override
+                    public void handleEvent(StockCreated aDomainEvent) {
+
+                        Map<String, String> message = new HashMap<String, String>();
+
+
+                        message.put("productId", aDomainEvent.productId().id());
+                        message.put("stockId", aDomainEvent.stockId().id());
+                        message.put("eventVersion", String.valueOf(aDomainEvent.eventVersion()));
+                        message.put("occurredOn", String.valueOf(aDomainEvent.occurredOn()));
+
+                        jmsTemplate.convertAndSend("STOCK_CREATED_QUEUE",message);
+                    }
+
+                    @Override
+                    public Class<StockCreated> subscribedToEventType() {
+                        return StockCreated.class;
+                    }
+                };
+
+
+        DomainEventPublisher.instance().subscribe(subscriber);
+
+
+        ProductId productId = new ProductId(aCommand.productId());
+
+        Product product =
+                this.productRepository()
+                .productOfId(productId);
+
+        if(product != null)
+        {
+            Stock stock =
+                    product.createStock(
+                            new StockId(aCommand.stockId()),
+                            aCommand.theshold());
+
+
+            this.stockRepository().add(stock);
+        }
+
+
+
+    }
 
     @Transactional
     public void decrementProductStock(DecrementProductStockCommand aCommand){
@@ -183,6 +239,7 @@ public class ProductApplicationService {
                     }
                 };
 
+
         DomainEventSubscriber<StockEmptied> subscriber2 =
                 new DomainEventSubscriber<StockEmptied>() {
                     @Override
@@ -197,11 +254,24 @@ public class ProductApplicationService {
                         return StockEmptied.class;
                     }
                 };
+        DomainEventSubscriber<ArrivageQuantityDecremented> subscriber3 =
+                new DomainEventSubscriber<ArrivageQuantityDecremented>() {
+                    @Override
+                    public void handleEvent(ArrivageQuantityDecremented aDomainEvent) {
 
+                        System.out.println("\n\n\n HERE MY EVENT "+aDomainEvent.toString()+"\n\n");
+                    }
+
+                    @Override
+                    public Class<ArrivageQuantityDecremented> subscribedToEventType() {
+                        return ArrivageQuantityDecremented.class;
+                    }
+                };
 
 
         DomainEventPublisher.instance().subscribe(subscriber1);
         DomainEventPublisher.instance().subscribe(subscriber2);
+        DomainEventPublisher.instance().subscribe(subscriber3);
 
 
 
@@ -267,23 +337,28 @@ public class ProductApplicationService {
         DomainEventPublisher.instance().subscribe(subscriber);
 
 
+        Set<Product>  products =
+                this.productRepository()
+                .allProducts();
+
 
         Product product =
                 this.productRepository()
                 .productOfId(
                         new ProductId(aCommand.productId()));
 
-        Stock stock =
-                this.stockRepository()
-                .stockOfId(
-                        new StockId(aCommand.stockId()));
+        Stock stock = new Stock(
+                new StockId(aCommand.stockId()),
+                new ProductId(aCommand.productId()));
+
+
+        System.out.println("\n\n\n HERE MY STOCK   "+ stock);
+
 
         if(stock != null){
             product.assignStock(stock);
         }
 
-
-        System.out.println("HERE IS MY PRODUCT in assignedStockToProduct \n\n"+product.toString());
 
 
     }
@@ -302,13 +377,6 @@ public class ProductApplicationService {
 
 
 
-    public Stock testReturnObject(){
-
-        return new Stock(
-                new StockId("sttt"),
-                new ProductId("ppp")
-        );
-    }
 
     private StockRepository stockRepository() {
         return this.stockRepository;

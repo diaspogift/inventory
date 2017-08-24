@@ -87,6 +87,8 @@ public class StockApplicationService {
 
      public void addProductArrivageToStock(RegisterNewStockProductArrivageCommand aCommand){
 
+
+        //TOD
          Product product =
                  this.productRepository()
                  .productOfId(

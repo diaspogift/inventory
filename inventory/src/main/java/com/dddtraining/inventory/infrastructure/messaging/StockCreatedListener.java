@@ -27,6 +27,8 @@ public class StockCreatedListener {
 
 
 
+        System.out.println("In StockCreatedListener handleEvent \n\n"+ mesage);
+
         String productId =  mesage.get("productId");
         String stockId =  mesage.get("stockId");
         String eventVersion =  mesage.get("eventVersion");

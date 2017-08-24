@@ -42,7 +42,7 @@ public class ProductCreatedListener {
         String occurredOn = mesage.get("occurredOn");
 
 
-        System.out.println("\n Recieved message for ProductCreated Event");
+        System.out.println("Recieved message for ProductCreated Event\n");
         System.out.println("productId = "+productId);
         System.out.println("name = "+name);
         System.out.println("description = "+description);
@@ -52,14 +52,6 @@ public class ProductCreatedListener {
 
 
 
-
-        this.stockApplicationService()
-                .createStock(
-                        new CreateStockCommand(
-                        stockId.id(),
-                        productId,
-                                0
-                ));
 
     }
 

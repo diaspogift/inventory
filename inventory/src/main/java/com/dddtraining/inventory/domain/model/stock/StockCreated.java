@@ -15,7 +15,7 @@ public class StockCreated implements DomainEvent {
     private ZonedDateTime occurredOn;
     int eventVersion;
 
-    public StockCreated(StockId stockId, ProductId productId, Quantity quantity) {
+    public StockCreated(StockId stockId, ProductId productId, Quantity quantity, int threshold) {
         this.stockId = stockId;
         this.productId = productId;
         this.quantity = quantity;

@@ -3,6 +3,7 @@ package com.dddtraining.inventory.domain.model.arrivage;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
+import com.dddtraining.inventory.domain.model.common.DomainEventPublisher;
 import com.dddtraining.inventory.domain.model.product.ProductId;
 import com.dddtraining.inventory.domain.model.stock.LifeSpanTime;
 import com.dddtraining.inventory.domain.model.stock.Quantity;
@@ -16,8 +17,9 @@ public class Arrivage {
 	private Quantity quantity;
 	private BigDecimal unitPrice;
 	private String description;
-	private LifeSpanTime lifeSpanTime;
-	
+    private boolean isRunOut;
+    private LifeSpanTime lifeSpanTime;
+
 	
 	public Arrivage(ProductId aProductId, StockId aStockId, ArrivageId anArrivageId, Quantity aQuantity, BigDecimal aUnitPrice,
                     String aDescription) {
@@ -29,8 +31,8 @@ public class Arrivage {
 		this.setQuantity(aQuantity);
 		this.setUnitPrice(aUnitPrice);
 		this.setDescription(aDescription);
+		this.setRunOut(false);
 		this.setLifeSpanTime(new LifeSpanTime(ZonedDateTime.now()));
-
 	}
 	
 	
@@ -114,6 +116,18 @@ public class Arrivage {
 		return this.lifeSpanTime().endDate();
 	}
 
+    public BigDecimal unitPrice() {
+        return this.unitPrice;
+    }
+
+    public boolean isrunOut() {
+        return this.isRunOut;
+    }
+
+    private void setRunOut(boolean runOut) {
+        this.isRunOut = runOut;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -154,4 +168,11 @@ public class Arrivage {
 		if(this.stockId() == null)
 			this.stockId = stockId;
 	}
+
+    public void decrementQuantityOf(int quantity) {
+	    if(quantity < 0)
+	        throw new IllegalArgumentException("Inalid quantity!");
+
+	    this.quantity().decrement(quantity);
+    }
 }

@@ -268,9 +268,8 @@ public class StockTest {
 
 
 
-        assertEquals(2, handledEvents.size());
+        assertEquals(1, handledEvents.size());
         assertEquals(handledEvents.get(0), StockCreated.class);
-        assertEquals(handledEvents.get(1), StockThresholdReached.class);
 
     }
 
@@ -344,7 +343,9 @@ public class StockTest {
                         "My product name",
                         "Nails for soft walls");
 
-        Stock stock = product.createStock(new StockId("ST12345"));
+        Stock stock = product.createStock(new StockId("ST12345"), 500);
+
+        product.assignStock(stock);
 
         assertEquals(0, stock.stockProductArrivages().size());
 

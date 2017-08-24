@@ -32,7 +32,8 @@ public class MockArrivageRepository implements ArrivageRepository {
                         new ArrivageId("ARR12345"),
                         new Quantity(1000),
                         new BigDecimal(500),
-                        "Arrivage de la periode des fetes");
+                        "Arrivage de la periode des fetes"
+                        );
 
 
         Arrivage arrivage2 =
@@ -167,5 +168,10 @@ public class MockArrivageRepository implements ArrivageRepository {
 
     public Set<Arrivage> allArrivages() {
         return Collections.unmodifiableSet(this.arrivages);
+    }
+
+    @Override
+    public Arrivage sellingSotckArrivage(StockId stockId, int initialOrdering) {
+        return null;
     }
 }

@@ -1,10 +1,7 @@
 package com.dddtraining.inventory.application;
 
 
-import com.dddtraining.inventory.application.command.AugmentProductStockCommand;
-import com.dddtraining.inventory.application.command.DecrementProductStockCommand;
-import com.dddtraining.inventory.application.command.RegisterProductArrivageCommand;
-import com.dddtraining.inventory.application.command.RegisterProductCommand;
+import com.dddtraining.inventory.application.command.*;
 import com.dddtraining.inventory.domain.model.arrivage.Arrivage;
 import com.dddtraining.inventory.domain.model.arrivage.ArrivageRepository;
 import com.dddtraining.inventory.domain.model.product.Product;
@@ -12,6 +9,7 @@ import com.dddtraining.inventory.domain.model.product.ProductId;
 import com.dddtraining.inventory.domain.model.product.ProductRepository;
 import com.dddtraining.inventory.domain.model.stock.Quantity;
 import com.dddtraining.inventory.domain.model.stock.Stock;
+import com.dddtraining.inventory.domain.model.stock.StockId;
 import com.dddtraining.inventory.domain.model.stock.StockRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -93,6 +91,32 @@ public class ProductApplicationServiceTest {
 
         assertNotNull(arrivages);
         assertEquals(1,arrivages.size());
+    }
+
+    @Test
+    public void testCreatProductStock(){
+
+        CreateProductStockCommand createProductStockCommand =
+                new CreateProductStockCommand(
+                        "STOCK_ID_20",
+                        "PRODUCT_ID_2",
+                        1000
+                );
+
+        productApplicationService.creatProductStock(createProductStockCommand);
+
+        Product product =
+                productRepository.productOfId(new ProductId("PRODUCT_ID_2"));
+
+        Stock stock =
+                stockRepository.stockOfId(new StockId("STOCK_ID_20"));
+
+        assertNotNull(product);
+        assertNotNull(stock);
+
+        assertEquals(product.productId(), stock.productId());
+
+
     }
 
 

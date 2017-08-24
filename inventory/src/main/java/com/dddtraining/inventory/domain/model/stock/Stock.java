@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.dddtraining.inventory.domain.model.arrivage.Arrivage;
-import com.dddtraining.inventory.domain.model.arrivage.NewArrivageCreated;
+import com.dddtraining.inventory.domain.model.arrivage.ArrivageId;
 import com.dddtraining.inventory.domain.model.common.DomainEventPublisher;
 import com.dddtraining.inventory.domain.model.product.ProductId;
 
@@ -33,6 +33,14 @@ public class Stock {
 		this.setAvailability(true);
 		this.setThesholdReached(false);
 		this.setStockProductArrivages(new HashSet<StockProductArrivage>());
+
+        //StockCreated domain event
+        DomainEventPublisher.instance()
+                .publish(new StockCreated(
+                        this.stockId(),
+                        this.productId(),
+                        this.quantity(),
+                        this.threshold()));
 	}
 
     public Stock(StockId aStockId, ProductId aProductId, Quantity aQuantity) {
@@ -46,13 +54,12 @@ public class Stock {
 
 
         //StockCreated domain event
-
-
 		DomainEventPublisher.instance()
 				.publish(new StockCreated(
 						this.stockId(),
 						this.productId(),
-						this.quantity()));
+						this.quantity(),
+                        this.threshold()));
     }
 
 	public Stock(StockId aStockId, ProductId aProductId, Quantity aQuantity, int aThreshold) {
@@ -75,7 +82,8 @@ public class Stock {
 				.publish(new StockCreated(
 						this.stockId(),
 						this.productId(),
-						this.quantity()));
+						this.quantity(),
+                        this.threshold()));
 	}
 
 	/*** Business logic ***/
@@ -89,12 +97,14 @@ public class Stock {
 	    Quantity actualQuantity = this.quantity();
 
 		this.setQuantity(this.quantity().decrement(aQuantityToClear));
+		this.decrementAStockArrivage(this, new Quantity(aQuantityToClear), 1);
 
 		// Raise Domain event
 
 		if(this.isThresholdReached(actualQuantity, new Quantity(aQuantityToClear))){
 
             this.setThesholdReached(true);
+
 
 			DomainEventPublisher.instance().publish(
 					new StockThresholdReached(
@@ -118,7 +128,10 @@ public class Stock {
 	}
 
 	private boolean isThresholdReached(Quantity actualQuantity, Quantity aQuantityToClear){
-		return ( actualQuantity.decrement(aQuantityToClear.value()).value() <=  this.threshold());
+
+	    boolean before = actualQuantity.value() > this.threshold();
+
+		return before && (actualQuantity.decrement(aQuantityToClear.value()).value() <=  this.threshold());
 	}
 
 	private boolean isStockEmpty(){
@@ -161,15 +174,74 @@ public class Stock {
             throw new IllegalArgumentException("Invalid arrivage");
         }
 
+        int ordering = this.stockProductArrivages().size() +1;
+
         StockProductArrivage aStockProductArrivage =
                 new StockProductArrivage(
                         this.productId(),
                         anArrivage.arrivageId(),
-                        anArrivage.lifeSpanTime());
+                        anArrivage.lifeSpanTime(),
+                        anArrivage.quantity(),
+                        ordering);
 
 
         this.stockProductArrivages().add(aStockProductArrivage);
         this.setQuantity(this.quantity().increment(anArrivage.quantity()));
+    }
+
+    public void reorderFrom(ArrivageId anArrivageId, int anOrdering){
+
+        for (StockProductArrivage nextStockProductArrivage : this.stockProductArrivages()){
+            nextStockProductArrivage.reorderFrom(anArrivageId, anOrdering);
+        }
+    }
+
+
+
+
+
+
+    public void decrementAStockArrivage(Stock aStock, Quantity aQuantity, int position){
+
+
+        for(StockProductArrivage nextStockProductArrivage : aStock.stockProductArrivages()){
+
+            if(nextStockProductArrivage.ordering() == position){
+
+                if(nextStockProductArrivage.quantity().value() >= aQuantity.value()){
+
+                    nextStockProductArrivage.quantity().decrement(aQuantity.value());
+
+                    DomainEventPublisher.instance()
+                            .publish(
+                                    new ArrivageQuantityDecremented(
+                                            nextStockProductArrivage.arrivageId(),
+                                            aQuantity)
+                            );
+
+                    return;
+
+                }
+                else if(nextStockProductArrivage.quantity().value() < aQuantity.value()){
+
+                    nextStockProductArrivage.quantity().decrement(nextStockProductArrivage.quantity().value());
+
+                    DomainEventPublisher.instance()
+                            .publish(
+                                    new ArrivageQuantityDecremented(
+                                            nextStockProductArrivage.arrivageId(),
+                                            nextStockProductArrivage.quantity())
+                            );
+
+                    decrementAStockArrivage(aStock, aQuantity.decrement(
+                            nextStockProductArrivage.quantity().value()),
+                            position+1);
+
+                }
+            }
+        }
+
+
     }
 
 

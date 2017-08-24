@@ -72,10 +72,6 @@ public class Product {
 
 	public Arrivage createNewArrivage(ArrivageId anArrivageId, Quantity aQuantity, BigDecimal aUnitPrice, String aDescription){
 
-		System.out.println("\n\nIn create arrivage stockId ==== "+this.stockId());
-		System.out.println("\n\nIn create arrivage stockId ==== "+this.stockId());
-		System.out.println("\n\nIn create arrivage stockId ==== "+this.stockId());
-		System.out.println("\n\nIn create arrivage stockId ==== "+this.stockId());
 
 		if(this.hasNoStock()){
 			throw  new IllegalStateException("Invalid state");
@@ -91,52 +87,46 @@ public class Product {
 						aDescription);
 
 
+
 		//NewArrivageCreated domain event
 
-        DomainEventPublisher
-                .instance()
-                .publish(
-                		new NewArrivageCreated(
-                        this.productId(),
+		DomainEventPublisher
+				.instance()
+				.publish(
+						new NewArrivageCreated(
+								this.productId(),
 								this.stockId(),
-                        anArrivageId,
-                        aQuantity,
-                        aUnitPrice,
-                        aDescription,
-                        arrivage.lifeSpanTime()
-                ));
-		
-		
+								anArrivageId,
+								aQuantity,
+								aUnitPrice,
+								aDescription,
+								arrivage.lifeSpanTime()
+						));
 		return arrivage;
 }
 
 
 	
-	public Stock createStock(StockId aStockId){
+	public Stock createStock(StockId aStockId, int aThreshold){
 		
 		Stock stock = 
 				new Stock(
 						aStockId,
-						this.productId()
-					   );
-		
-		this.setStockId(aStockId);
-
-
-		DomainEventPublisher.instance().publish(
-				new ProductStockCreated(
-						aStockId,
 						this.productId(),
-						new Quantity()));
-
+						new Quantity(0),
+						aThreshold
+					   );
 		return stock;
 	}
 
 	public void assignStock(Stock aStock){
 
+
+
 		if(this.hasNoStock()){
 			this.setStockId(aStock.stockId());
 			this.elevateAvailabilityStatus(AvailabilityStatus.STOCK_PROVIDED);
+
 
 			DomainEventPublisher.instance()
 					.publish(
@@ -160,6 +150,7 @@ public class Product {
 			return false;
 
 	}
+
 
 
 	//*** Getters and Setters ***//

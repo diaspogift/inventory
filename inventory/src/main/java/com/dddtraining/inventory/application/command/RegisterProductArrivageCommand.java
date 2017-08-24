@@ -38,4 +38,16 @@ public class RegisterProductArrivageCommand {
     public String description() {
         return this.description;
     }
+
+
+    @Override
+    public String toString() {
+        return "RegisterProductArrivageCommand{" +
+                "productId='" + productId + '\'' +
+                ", arrivageId='" + arrivageId + '\'' +
+                ", quantity=" + quantity +
+                ", unitPrice=" + unitPrice +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }
