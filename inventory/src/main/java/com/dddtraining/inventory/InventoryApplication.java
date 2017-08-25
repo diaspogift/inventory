@@ -6,8 +6,12 @@ import com.dddtraining.inventory.application.command.CreateProductStockCommand;
 import com.dddtraining.inventory.application.command.RegisterProductArrivageCommand;
 import com.dddtraining.inventory.application.command.RegisterProductCommand;
 import com.dddtraining.inventory.domain.model.arrivage.Arrivage;
+import com.dddtraining.inventory.domain.model.arrivage.ArrivageId;
 import com.dddtraining.inventory.domain.model.product.Product;
+import com.dddtraining.inventory.domain.model.product.ProductId;
+import com.dddtraining.inventory.domain.model.stock.Quantity;
 import com.dddtraining.inventory.domain.model.stock.Stock;
+import com.dddtraining.inventory.domain.model.stock.StockId;
 import com.dddtraining.inventory.domain.model.stock.StockProductArrivage;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -22,7 +26,59 @@ public class InventoryApplication {
 
 	public static void main(String[] args) {
 
-		ConfigurableApplicationContext ctx = SpringApplication.run(InventoryApplication.class, args);
+
+
+
+
+
+        Stock stock =
+                new Stock(
+                        new StockId("STOCK_ID_1"),
+                        new ProductId("PROD_ID_1")
+                );
+
+        Arrivage arrivage1 =
+                new Arrivage(
+                        new ProductId("PROD_ID_1"),
+                        new StockId("STOCK_ID_1"),
+                        new ArrivageId("ARR_ID_1"),
+                        new Quantity(300),
+                        new BigDecimal(105),
+                        "Des"
+                );
+
+        Arrivage arrivage2 =
+                new Arrivage(
+                        new ProductId("PROD_ID_1"),
+                        new StockId("STOCK_ID_1"),
+                        new ArrivageId("ARR_ID_2"),
+                        new Quantity(100),
+                        new BigDecimal(110),
+                        "Des"
+                );
+        Arrivage arrivage3 =
+                new Arrivage(
+                        new ProductId("PROD_ID_1"),
+                        new StockId("STOCK_ID_1"),
+                        new ArrivageId("ARR_ID_3"),
+                        new Quantity(100),
+                        new BigDecimal(85),
+                        "Des"
+                );
+
+        stock.addNewStockProductArrivage(arrivage1);
+        stock.addNewStockProductArrivage(arrivage2);
+        stock.addNewStockProductArrivage(arrivage3);
+
+
+
+
+        stock.clearStockOf(100);
+        stock.clearStockOf(250);
+
+
+
+		/*ConfigurableApplicationContext ctx = SpringApplication.run(InventoryApplication.class, args);
 
         ProductApplicationService productApplicationService =  ctx.getBean(ProductApplicationService.class);
         StockApplicationService stockApplicationService =  ctx.getBean(StockApplicationService.class);
@@ -135,7 +191,7 @@ public class InventoryApplication {
 
 
 
-        System.out.println("REGISTERED PRODUCT STOCK WITH ONE ARRIVAGE \n\n "+ stock1);
+        System.out.println("REGISTERED PRODUCT STOCK WITH THREE ARRIVAGES \n\n "+ stock1);*/
 
     }
 }

@@ -343,4 +343,5 @@ public class ProductTest {
         assertEquals(300, stock.quantity().value());
     }
 
+
 }

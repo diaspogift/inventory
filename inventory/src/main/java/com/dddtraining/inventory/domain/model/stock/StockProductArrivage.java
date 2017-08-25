@@ -115,4 +115,11 @@ public class StockProductArrivage {
 	private void setQuantity(Quantity quantity) {
 		this.quantity = quantity;
 	}
+
+	public void resetQuantity(Quantity aQuantity) {
+		if(aQuantity.value() < 0 ){
+			throw new IllegalArgumentException("Invalid quantity");
+		}
+		this.setQuantity(aQuantity);
+	}
 }

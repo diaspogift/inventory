@@ -40,7 +40,7 @@ public class Quantity {
 
 	public Quantity decrement(int aValue){
 		
-		if(aValue <= 0){
+		if(aValue < 0){
 			throw new IllegalArgumentException("Negative value was given");
 		}
 		if(this.value() - aValue < 0){

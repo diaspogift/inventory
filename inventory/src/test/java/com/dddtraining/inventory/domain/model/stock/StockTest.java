@@ -2,6 +2,7 @@ package com.dddtraining.inventory.domain.model.stock;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -51,25 +52,150 @@ public class StockTest {
 	
 	@Test
 	public void testClearStockOfNoThresholdReached(){
-		
-		Stock stock = 
-				new Stock(
-						new StockId("ST12345"), 
-						new ProductId("PR12345"),
-                        new Quantity(50));
-		
-		assertEquals(new Quantity(50), stock.quantity());
+
+
+        Stock stock =
+                new Stock(
+                        new StockId("STOCK_ID_1"),
+                        new ProductId("PROD_ID_1")
+                );
+
+        Arrivage arrivage1 =
+                new Arrivage(
+                        new ProductId("PROD_ID_1"),
+                        new StockId("STOCK_ID_1"),
+                        new ArrivageId("ARR_ID_1"),
+                        new Quantity(300),
+                        new BigDecimal(105),
+                        "Des"
+                );
+
+        Arrivage arrivage2 =
+                new Arrivage(
+                        new ProductId("PROD_ID_1"),
+                        new StockId("STOCK_ID_1"),
+                        new ArrivageId("ARR_ID_2"),
+                        new Quantity(150),
+                        new BigDecimal(110),
+                        "Des"
+                );
+        Arrivage arrivage3 =
+                new Arrivage(
+                        new ProductId("PROD_ID_1"),
+                        new StockId("STOCK_ID_1"),
+                        new ArrivageId("ARR_ID_3"),
+                        new Quantity(100),
+                        new BigDecimal(85),
+                        "Des"
+                );
+
+        stock.addNewStockProductArrivage(arrivage1);
+        stock.addNewStockProductArrivage(arrivage2);
+        stock.addNewStockProductArrivage(arrivage3);
 
 
 
 		
-		stock.clearStockOf(5);
-		
-		assertEquals(new Quantity(45), stock.quantity());
-		
-		stock.clearStockOf(5);
-		
-		assertEquals(new Quantity(40), stock.quantity());
+		assertEquals(new Quantity(550), stock.quantity());
+		assertNotNull(stock.stockProductArrivages());
+		assertEquals(3, stock.stockProductArrivages().size());
+
+
+		//First clear
+
+        stock.clearStockOf(100);
+
+
+        StockProductArrivage supposellyModifiedArrivage1 = null;
+        StockProductArrivage supposellyModifiedArrivage2 = null;
+        StockProductArrivage supposellyModifiedArrivage3 = null;
+
+        for(StockProductArrivage next : stock.stockProductArrivages()){
+
+            if (next.ordering() == 1){
+
+                supposellyModifiedArrivage1 = next;
+            }
+            if (next.ordering() == 2){
+
+                supposellyModifiedArrivage2 = next;
+            }
+            if (next.ordering() == 3){
+
+                supposellyModifiedArrivage3 = next;
+            }
+        }
+
+        assertEquals(new Quantity(200), supposellyModifiedArrivage1.quantity());
+        assertEquals(new Quantity(150), supposellyModifiedArrivage2.quantity());
+        assertEquals(new Quantity(100), supposellyModifiedArrivage3.quantity());
+        assertEquals(new Quantity(450), stock.quantity());
+
+
+
+        //Second clear
+        stock.clearStockOf(250);
+
+
+         supposellyModifiedArrivage1 = null;
+         supposellyModifiedArrivage2 = null;
+         supposellyModifiedArrivage3 = null;
+
+        for(StockProductArrivage next : stock.stockProductArrivages()){
+
+            if (next.ordering() == 1){
+
+                supposellyModifiedArrivage1 = next;
+            }
+            if (next.ordering() == 2){
+
+                supposellyModifiedArrivage2 = next;
+            }
+            if (next.ordering() == 3){
+
+                supposellyModifiedArrivage3 = next;
+            }
+        }
+
+        assertEquals(new Quantity(0), supposellyModifiedArrivage1.quantity());
+        assertEquals(new Quantity(100), supposellyModifiedArrivage2.quantity());
+        assertEquals(new Quantity(100), supposellyModifiedArrivage3.quantity());
+        assertEquals(new Quantity(200), stock.quantity());
+
+        //Third clear
+        stock.clearStockOf(150);
+
+
+        supposellyModifiedArrivage1 = null;
+        supposellyModifiedArrivage2 = null;
+        supposellyModifiedArrivage3 = null;
+
+        for(StockProductArrivage next : stock.stockProductArrivages()){
+
+            if (next.ordering() == 1){
+
+                supposellyModifiedArrivage1 = next;
+            }
+            if (next.ordering() == 2){
+
+                supposellyModifiedArrivage2 = next;
+            }
+            if (next.ordering() == 3){
+
+                supposellyModifiedArrivage3 = next;
+            }
+        }
+
+        assertEquals(new Quantity(0), supposellyModifiedArrivage1.quantity());
+        assertEquals(new Quantity(0), supposellyModifiedArrivage2.quantity());
+        assertEquals(new Quantity(50), supposellyModifiedArrivage3.quantity());
+        assertEquals(new Quantity(50), stock.quantity());
+
+//
+//
+//		stock.clearStockOf(5);
+//
+//		assertEquals(new Quantity(40), stock.quantity());
 
 	}
 

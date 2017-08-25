@@ -210,7 +210,7 @@ public class Stock {
 
                 if(nextStockProductArrivage.quantity().value() >= aQuantity.value()){
 
-                    nextStockProductArrivage.quantity().decrement(aQuantity.value());
+					nextStockProductArrivage.resetQuantity(nextStockProductArrivage.quantity().decrement(aQuantity.value()));
 
                     DomainEventPublisher.instance()
                             .publish(
@@ -224,18 +224,23 @@ public class Stock {
                 }
                 else if(nextStockProductArrivage.quantity().value() < aQuantity.value()){
 
-                    nextStockProductArrivage.quantity().decrement(nextStockProductArrivage.quantity().value());
+					Quantity residuelQuantity =
+							aQuantity.decrement(nextStockProductArrivage.quantity().value());
 
-                    DomainEventPublisher.instance()
+					nextStockProductArrivage.resetQuantity(new Quantity(0));
+
+
+					DomainEventPublisher.instance()
                             .publish(
                                     new ArrivageQuantityDecremented(
                                             nextStockProductArrivage.arrivageId(),
                                             nextStockProductArrivage.quantity())
                             );
 
-                    decrementAStockArrivage(aStock, aQuantity.decrement(
-                            nextStockProductArrivage.quantity().value()),
-                            position+1);
+
+					System.out.println("\n\nPASSING THIS QUANTITY IN DECREMENT STOCK QUANTITY "+residuelQuantity);
+
+                    decrementAStockArrivage(aStock, residuelQuantity, position+1);
 
                 }
             }
