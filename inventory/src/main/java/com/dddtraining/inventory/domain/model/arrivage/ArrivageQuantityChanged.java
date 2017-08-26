@@ -1,11 +1,11 @@
-package com.dddtraining.inventory.domain.model.stock;
+package com.dddtraining.inventory.domain.model.arrivage;
 
-import com.dddtraining.inventory.domain.model.arrivage.ArrivageId;
 import com.dddtraining.inventory.domain.model.common.DomainEvent;
+import com.dddtraining.inventory.domain.model.stock.Quantity;
 
 import java.time.ZonedDateTime;
 
-public class ArrivageQuantityDecremented implements DomainEvent {
+public class ArrivageQuantityChanged implements DomainEvent {
 
     private ArrivageId arrivageId;
     private Quantity quantity;
@@ -13,7 +13,7 @@ public class ArrivageQuantityDecremented implements DomainEvent {
     private ZonedDateTime occurredOn;
 
 
-    public ArrivageQuantityDecremented(ArrivageId arrivageId, Quantity aQuantity) {
+    public ArrivageQuantityChanged(ArrivageId arrivageId, Quantity aQuantity) {
         this.arrivageId = arrivageId;
         this.quantity = aQuantity;
         this.eventVersion = 1;
@@ -44,6 +44,19 @@ public class ArrivageQuantityDecremented implements DomainEvent {
     }
 
     public ZonedDateTime occurredOn() {
+
         return this.occurredOn;
     }
+
+
+	
+    
+    @Override
+	public String toString() {
+		return "ArrivageQuantityChanged [arrivageId=" + arrivageId + ", quantity=" + quantity + ", eventVersion="
+				+ eventVersion + ", occurredOn=" + occurredOn + "]";
+	}
+    
+    
+    
 }

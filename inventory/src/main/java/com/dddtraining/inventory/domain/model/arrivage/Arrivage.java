@@ -1,5 +1,6 @@
 package com.dddtraining.inventory.domain.model.arrivage;
 
+import com.dddtraining.inventory.domain.model.common.DomainEventPublisher;
 import com.dddtraining.inventory.domain.model.product.ProductId;
 import com.dddtraining.inventory.domain.model.stock.LifeSpanTime;
 import com.dddtraining.inventory.domain.model.stock.Quantity;
@@ -58,6 +59,13 @@ public class Arrivage {
         }
 
         this.setQuantity(new Quantity(aValue));
+        
+        
+        DomainEventPublisher.instance()
+        .publish(
+        		new ArrivageQuantityChanged(
+        				this.arrivageId, 
+        				this.quantity()));
     }
 
     /*** Getters and Setters ***/
@@ -164,10 +172,5 @@ public class Arrivage {
             this.stockId = stockId;
     }
 
-    public void decrementQuantityOf(int quantity) {
-        if (quantity < 0)
-            throw new IllegalArgumentException("Inalid quantity!");
 
-        this.quantity().decrement(quantity);
-    }
 }

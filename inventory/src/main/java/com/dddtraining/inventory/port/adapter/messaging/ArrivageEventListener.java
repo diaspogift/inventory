@@ -1,9 +1,13 @@
 package com.dddtraining.inventory.port.adapter.messaging;
 
+import com.dddtraining.inventory.InventoryApplication;
 import com.dddtraining.inventory.application.arrivage.ArrivageApplicationService;
 import com.dddtraining.inventory.application.product.ProductApplicationService;
 import com.dddtraining.inventory.application.stock.StockApplicationService;
 import com.dddtraining.inventory.application.command.RegisterNewStockProductArrivageCommand;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
@@ -13,6 +17,10 @@ import java.util.Map;
 
 @Component
 public class ArrivageEventListener {
+	
+	
+    private static final Logger logger = LoggerFactory
+            .getLogger(InventoryApplication.class);
 
     @Autowired
     private StockApplicationService stockApplicationService;
@@ -62,7 +70,7 @@ public class ArrivageEventListener {
 
     }
 
-    @JmsListener(destination = "ARRIVAGE_QUANTITY_CHANGE_QUEUE")
+    @JmsListener(destination = "ARRIVAGE_QUANTITY_CHANGED_QUEUE")
     public void handleArrivageQuantityChangedEvent(Map<String, String> message) {
 
         String arrivageId = message.get("arrivageId");
@@ -70,10 +78,11 @@ public class ArrivageEventListener {
 
         System.out.println("arrivageId = " + arrivageId);
         System.out.println("quantity = " + quantity);
+        
+        
+        logger.debug("\n"+message.toString());
 
-        this.arrivageApplicationService()
-                .decrementArrivageQuantityOf(arrivageId, quantity);
-
+     
     }
 
 

@@ -1,7 +1,9 @@
-package com.dddtraining.inventory.domain.model.arrivages;
+package com.dddtraining.inventory.domain.model.arrivage;
 
 import com.dddtraining.inventory.domain.model.arrivage.Arrivage;
 import com.dddtraining.inventory.domain.model.arrivage.ArrivageId;
+import com.dddtraining.inventory.domain.model.arrivage.ArrivageQuantityChanged;
+import com.dddtraining.inventory.domain.model.common.EventTrackingTest;
 import com.dddtraining.inventory.domain.model.product.ProductId;
 import com.dddtraining.inventory.domain.model.stock.Quantity;
 import com.dddtraining.inventory.domain.model.stock.StockId;
@@ -17,7 +19,7 @@ import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class ArrivageTest {
+public class ArrivageTest extends EventTrackingTest{
 
 
     @Test
@@ -44,7 +46,7 @@ public class ArrivageTest {
     }
 
     @Test
-    public void changeUnitPrice() {
+    public void testChangeUnitPrice() {
 
         Arrivage arrivage =
                 new Arrivage(
@@ -64,7 +66,7 @@ public class ArrivageTest {
     }
 
     @Test
-    public void changeQuantity() {
+    public void testChangeQuantity() {
 
         Arrivage arrivage =
                 new Arrivage(
@@ -81,6 +83,9 @@ public class ArrivageTest {
 
 
         assertEquals(new Quantity(2000), arrivage.quantity());
+        
+        this.expectedEvents(1);
+        this.expectedEvent(ArrivageQuantityChanged.class);
 
     }
 }
