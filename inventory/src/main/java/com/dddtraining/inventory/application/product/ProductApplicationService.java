@@ -1,27 +1,39 @@
-package com.dddtraining.inventory.application;
+package com.dddtraining.inventory.application.product;
 
-import com.dddtraining.inventory.application.command.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.dddtraining.inventory.application.command.AssignedStockCommand;
+import com.dddtraining.inventory.application.command.AugmentProductStockCommand;
+import com.dddtraining.inventory.application.command.CreateProductStockCommand;
+import com.dddtraining.inventory.application.command.DecrementProductStockCommand;
+import com.dddtraining.inventory.application.command.RegisterProductArrivageCommand;
+import com.dddtraining.inventory.application.command.RegisterProductCommand;
 import com.dddtraining.inventory.domain.model.arrivage.Arrivage;
 import com.dddtraining.inventory.domain.model.arrivage.ArrivageId;
 import com.dddtraining.inventory.domain.model.arrivage.ArrivageRepository;
 import com.dddtraining.inventory.domain.model.arrivage.NewArrivageCreated;
 import com.dddtraining.inventory.domain.model.common.DomainEventPublisher;
 import com.dddtraining.inventory.domain.model.common.DomainEventSubscriber;
-import com.dddtraining.inventory.domain.model.product.*;
-import com.dddtraining.inventory.domain.model.stock.*;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.annotation.ReadOnlyProperty;
-import org.springframework.jms.core.JmsTemplate;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import com.dddtraining.inventory.domain.model.product.Product;
+import com.dddtraining.inventory.domain.model.product.ProductCreated;
+import com.dddtraining.inventory.domain.model.product.ProductId;
+import com.dddtraining.inventory.domain.model.product.ProductRepository;
+import com.dddtraining.inventory.domain.model.product.ProductStockAssigned;
+import com.dddtraining.inventory.domain.model.stock.Quantity;
+import com.dddtraining.inventory.domain.model.stock.Stock;
+import com.dddtraining.inventory.domain.model.stock.StockCreated;
+import com.dddtraining.inventory.domain.model.stock.StockEmptied;
+import com.dddtraining.inventory.domain.model.stock.StockId;
+import com.dddtraining.inventory.domain.model.stock.StockQuantityChanged;
+import com.dddtraining.inventory.domain.model.stock.StockRepository;
+import com.dddtraining.inventory.domain.model.stock.StockThresholdReached;
 
 @Service
 public class ProductApplicationService {
@@ -37,34 +49,33 @@ public class ProductApplicationService {
 
 
     @Transactional(readOnly = true)
-    public Product product(String aProductId){
+    public Product product(String aProductId) {
 
         Product product =
                 this.productRepository()
-                .productOfId(new ProductId(aProductId));
+                        .productOfId(new ProductId(aProductId));
 
-        return  product;
+        return product;
     }
 
     @Transactional(readOnly = true)
-    public Set<Product> products(){
+    public Set<Product> products() {
 
-        Set<Product> products  =
+        Set<Product> products =
                 this.productRepository().allProducts();
 
-        return  products;
+        return products;
     }
 
 
     @Transactional
-    public void addProduct(RegisterProductCommand aCommand){
+    public void addProduct(RegisterProductCommand aCommand) {
 
         DomainEventSubscriber<ProductCreated> subscriber =
                 new DomainEventSubscriber<ProductCreated>() {
                     @Override
                     public void handleEvent(ProductCreated aDomainEvent) {
 
-                        System.out.println("\n\n\n HERE MY EVENT"+ aDomainEvent);
 
 
                         Map<String, String> message = new HashMap<String, String>();
@@ -91,10 +102,8 @@ public class ProductApplicationService {
         DomainEventPublisher.instance().subscribe(subscriber);
 
 
-
         ProductId productId = new ProductId(aCommand.productId());
 
-        System.out.println(" \n\n HERE IS MY PRODUCT ID TO ADD "+aCommand.productId());
 
         this.productRepository()
                 .add(new Product(
@@ -106,9 +115,7 @@ public class ProductApplicationService {
     }
 
     @Transactional
-    public Arrivage addProductArrivage(RegisterProductArrivageCommand aCommand){
-
-        System.out.println("HERE in addProductArrivage ProdApplicationService aCommand\n\n\n "+aCommand.toString());
+    public Arrivage addProductArrivage(RegisterProductArrivageCommand aCommand) {
 
 
         DomainEventSubscriber<NewArrivageCreated> subscriber =
@@ -117,7 +124,6 @@ public class ProductApplicationService {
                     public void handleEvent(NewArrivageCreated aDomainEvent) {
 
 
-                        System.out.println("\n\n HERE MY EVENT"+ aDomainEvent);
 
                         Map<String, String> message = new HashMap<String, String>();
 
@@ -135,7 +141,6 @@ public class ProductApplicationService {
                         jmsTemplate.convertAndSend("NEW_ARRIVAGE_CREATED_QUEUE", message);
 
 
-
                     }
 
                     @Override
@@ -149,9 +154,9 @@ public class ProductApplicationService {
 
         Product product =
                 this.productRepository()
-                    .productOfId(new ProductId(
-                            aCommand.productId()
-                    ));
+                        .productOfId(new ProductId(
+                                aCommand.productId()
+                        ));
 
 
         Arrivage productArrivage =
@@ -167,12 +172,12 @@ public class ProductApplicationService {
 
         DomainEventPublisher.instance().unSubscribe(subscriber);
 
-        return  productArrivage;
+        return productArrivage;
     }
 
 
     @Transactional
-    public void creatProductStock(CreateProductStockCommand aCommand){
+    public void creatProductStock(CreateProductStockCommand aCommand) {
 
         DomainEventSubscriber<StockCreated> subscriber =
                 new DomainEventSubscriber<StockCreated>() {
@@ -187,7 +192,7 @@ public class ProductApplicationService {
                         message.put("eventVersion", String.valueOf(aDomainEvent.eventVersion()));
                         message.put("occurredOn", String.valueOf(aDomainEvent.occurredOn()));
 
-                        jmsTemplate.convertAndSend("STOCK_CREATED_QUEUE",message);
+                        jmsTemplate.convertAndSend("STOCK_CREATED_QUEUE", message);
                     }
 
                     @Override
@@ -204,10 +209,9 @@ public class ProductApplicationService {
 
         Product product =
                 this.productRepository()
-                .productOfId(productId);
+                        .productOfId(productId);
 
-        if(product != null)
-        {
+        if (product != null) {
             Stock stock =
                     product.createStock(
                             new StockId(aCommand.stockId()),
@@ -218,19 +222,24 @@ public class ProductApplicationService {
         }
 
 
-
     }
 
     @Transactional
-    public void decrementProductStock(DecrementProductStockCommand aCommand){
+    public void decrementProductStock(DecrementProductStockCommand aCommand) {
 
 
         DomainEventSubscriber<StockThresholdReached> subscriber1 =
                 new DomainEventSubscriber<StockThresholdReached>() {
                     @Override
                     public void handleEvent(StockThresholdReached aDomainEvent) {
+                    	
+                	Map<String, String> message = new HashMap<String, String>();
 
-                        System.out.println("\n\n\n HERE MY EVENT "+aDomainEvent.toString()+"\n\n");
+                    	
+                    	message.put("stockId", aDomainEvent.stockId().id());
+                    	message.put("productId", aDomainEvent.productId().id());
+
+                    	jmsTemplate.convertAndSend("STOCK_THRESHOLD_REACHED_QUEUE", message);
                     }
 
                     @Override
@@ -244,9 +253,14 @@ public class ProductApplicationService {
                 new DomainEventSubscriber<StockEmptied>() {
                     @Override
                     public void handleEvent(StockEmptied aDomainEvent) {
+                    	
+                    	Map<String, String> message = new HashMap<String, String>();
 
-                        //TODO the event will be handled here!
-                        System.out.println("\n\n\n Event "+aDomainEvent.toString()+"\n\n");
+                    	
+                    	message.put("stockId", aDomainEvent.stockId().id());
+                    	message.put("productId", aDomainEvent.productId().id());
+
+                    	jmsTemplate.convertAndSend("STOCK_EMPTIED_QUEUE", message);
                     }
 
                     @Override
@@ -254,17 +268,22 @@ public class ProductApplicationService {
                         return StockEmptied.class;
                     }
                 };
-        DomainEventSubscriber<ArrivageQuantityDecremented> subscriber3 =
-                new DomainEventSubscriber<ArrivageQuantityDecremented>() {
+        DomainEventSubscriber<StockQuantityChanged> subscriber3 =
+                new DomainEventSubscriber<StockQuantityChanged>() {
                     @Override
-                    public void handleEvent(ArrivageQuantityDecremented aDomainEvent) {
+                    public void handleEvent(StockQuantityChanged aDomainEvent) {
+                    	
+                    	Map<String, String> message = new HashMap<String, String>();
+                    	
+                    	message.put("stockId", aDomainEvent.stockId().id());
+                    	message.put("productId", aDomainEvent.productId().id());
 
-                        System.out.println("\n\n\n HERE MY EVENT "+aDomainEvent.toString()+"\n\n");
+                    	jmsTemplate.convertAndSend("STOCK_QUANTITY_CHANGED_QUEUE", message);
                     }
 
                     @Override
-                    public Class<ArrivageQuantityDecremented> subscribedToEventType() {
-                        return ArrivageQuantityDecremented.class;
+                    public Class<StockQuantityChanged> subscribedToEventType() {
+                        return StockQuantityChanged.class;
                     }
                 };
 
@@ -274,28 +293,26 @@ public class ProductApplicationService {
         DomainEventPublisher.instance().subscribe(subscriber3);
 
 
-
-
         Stock stock =
                 this.stockRepository()
                         .stockForProductOfId((
                                 new ProductId(aCommand.productId())));
 
-        if(stock != null )
+        if (stock != null)
 
             stock.clearStockOf(aCommand.quantity());
 
     }
 
     @Transactional
-    public void augmentProductStock(AugmentProductStockCommand aCommand){
+    public void augmentProductStock(AugmentProductStockCommand aCommand) {
 
         Stock stock =
                 this.stockRepository()
                         .stockForProductOfId((
                                 new ProductId(aCommand.productId())));
 
-        if(stock != null )
+        if (stock != null)
 
             stock.augmentStockOf(aCommand.quantity());
 
@@ -303,10 +320,8 @@ public class ProductApplicationService {
 
 
     @Transactional
-    public void assignedStockToProduct(AssignedStockCommand aCommand){
+    public void assignedStockToProduct(AssignedStockCommand aCommand) {
 
-
-        System.out.println("\n\n\n AssignedStockCommand  = "+ aCommand.toString());
 
 
         DomainEventSubscriber<ProductStockAssigned> subscriber =
@@ -314,8 +329,6 @@ public class ProductApplicationService {
                     @Override
                     public void handleEvent(ProductStockAssigned aDomainEvent) {
 
-
-                        System.out.println("\n\n\n HERE MY EVENT  "+ aDomainEvent.toString());
 
 
 
@@ -325,7 +338,7 @@ public class ProductApplicationService {
                         message.put("productId", aDomainEvent.productId().id());
 
 
-                        //jmsTemplate.convertAndSend("NEW_ARRIVAGE_CREATED_QUEUE", message);
+                        jmsTemplate.convertAndSend("PRODUCT_STOCK_ASSIGNED_QUEUE", message);
                     }
 
                     @Override
@@ -337,28 +350,26 @@ public class ProductApplicationService {
         DomainEventPublisher.instance().subscribe(subscriber);
 
 
-        Set<Product>  products =
+        Set<Product> products =
                 this.productRepository()
-                .allProducts();
+                        .allProducts();
 
 
         Product product =
                 this.productRepository()
-                .productOfId(
-                        new ProductId(aCommand.productId()));
+                        .productOfId(
+                                new ProductId(aCommand.productId()));
 
         Stock stock = new Stock(
                 new StockId(aCommand.stockId()),
                 new ProductId(aCommand.productId()));
 
 
-        System.out.println("\n\n\n HERE MY STOCK   "+ stock);
 
 
-        if(stock != null){
+        if (stock != null && product != null) {
             product.assignStock(stock);
         }
-
 
 
     }
@@ -366,27 +377,28 @@ public class ProductApplicationService {
 
     //TODO not tested
     @Transactional(readOnly = true)
-    public Set<Arrivage> productArrivages(String productId){
+    public Set<Arrivage> productArrivages(String productId) {
 
         Set<Arrivage> arrivages =
                 this.arrivageRepository()
-                .allArrivagesOfProductId(new ProductId(productId));
+                        .allArrivagesOfProductId(new ProductId(productId));
 
         return arrivages;
     }
 
 
-
-
     private StockRepository stockRepository() {
         return this.stockRepository;
     }
+
     private ArrivageRepository arrivageRepository() {
-        return  this.arrivageRepository;
+        return this.arrivageRepository;
     }
+
     private ProductRepository productRepository() {
         return this.productRepository;
     }
+
     public JmsTemplate jmsTemplate() {
         return this.jmsTemplate;
     }

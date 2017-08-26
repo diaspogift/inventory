@@ -14,36 +14,45 @@ public class DomainEventPublisher {
     };
 
     private boolean publishing;
-    private List<DomainEventSubscriber> subscribers;
+    @SuppressWarnings("rawtypes")
+	private List<DomainEventSubscriber> subscribers;
 
-    public static DomainEventPublisher instance(){ return instance.get();}
+    private DomainEventPublisher() {
+        super();
 
+        this.setPublishing(false);
+        this.ensureSubscribersList();
+    }
 
-    public <T> void publish(final T aDomainEvent){
+    public static DomainEventPublisher instance() {
+        return instance.get();
+    }
 
-        if(!this.isPublishing() && this.hasSubscribers()){
-            
-            try{
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public <T> void publish(final T aDomainEvent) {
+
+        if (!this.isPublishing() && this.hasSubscribers()) {
+
+            try {
 
                 this.setPublishing(true);
 
                 Class<?> eventType = aDomainEvent.getClass();
 
-                List<DomainEventSubscriber<T>> allSubscribers = this.subscribers();
+				List<DomainEventSubscriber<T>> allSubscribers = this.subscribers();
 
 
-                for(DomainEventSubscriber aSubscriber : allSubscribers){
+                for (DomainEventSubscriber aSubscriber : allSubscribers) {
 
                     Class<?> subscribedToType = aSubscriber.subscribedToEventType();
 
-                    if(eventType == subscribedToType || subscribedToType == DomainEvent.class){
+                    if (eventType == subscribedToType || subscribedToType == DomainEvent.class) {
                         aSubscriber.handleEvent(aDomainEvent);
                     }
                 }
 
 
-            }
-            finally {
+            } finally {
                 this.setPublishing(false);
             }
 
@@ -56,31 +65,32 @@ public class DomainEventPublisher {
         }
     }
 
-    public void reset(){
+    public void reset() {
         if (!this.isPublishing()) {
             this.setSubscribers(null);
         }
     }
-
-    public <T> void subscribe(DomainEventSubscriber<T> aSubscriber){
-        if(!this.isPublishing()){
+    @SuppressWarnings("unchecked")
+	public <T> void subscribe(DomainEventSubscriber<T> aSubscriber) {
+        if (!this.isPublishing()) {
             this.ensureSubscribersList();
             this.subscribers().add(aSubscriber);
         }
     }
 
-    public <T> void unSubscribe(DomainEventSubscriber<T> aSubscriber){
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	public <T> void unSubscribe(DomainEventSubscriber<T> aSubscriber) {
 
-        List<DomainEventSubscriber<T>> allSubscribers = this.subscribers();
+		List<DomainEventSubscriber<T>> allSubscribers = this.subscribers();
 
         Class<?> eventType = aSubscriber.getClass();
-        
+
         DomainEventSubscriber<T> subscriber = null;
 
 
-        for(DomainEventSubscriber nextSubscriber : allSubscribers){
+        for (DomainEventSubscriber nextSubscriber : allSubscribers) {
 
-            if(aSubscriber  == nextSubscriber){
+            if (aSubscriber == nextSubscriber) {
 
                 subscriber = nextSubscriber;
             }
@@ -89,18 +99,11 @@ public class DomainEventPublisher {
         this.subscribers().remove(subscriber);
 
 
-
     }
 
-    private DomainEventPublisher() {
-        super();
-
-        this.setPublishing(false);
-        this.ensureSubscribersList();
-    }
-
-    private void ensureSubscribersList() {
-        if(!this.hasSubscribers()){
+    @SuppressWarnings("rawtypes")
+	private void ensureSubscribersList() {
+        if (!this.hasSubscribers()) {
             this.setSubscribers(new ArrayList());
         }
     }
@@ -109,7 +112,8 @@ public class DomainEventPublisher {
         return this.subscribers() != null;
     }
 
-    private List subscribers() {
+    @SuppressWarnings("rawtypes")
+	private List subscribers() {
         return this.subscribers;
     }
 
@@ -122,7 +126,8 @@ public class DomainEventPublisher {
         this.publishing = publishing;
     }
 
-    public void setSubscribers(List aSubscribers) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public void setSubscribers(List aSubscribers) {
         this.subscribers = aSubscribers;
     }
 }

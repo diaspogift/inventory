@@ -33,7 +33,7 @@ public class MockArrivageRepository implements ArrivageRepository {
                         new Quantity(1000),
                         new BigDecimal(500),
                         "Arrivage de la periode des fetes"
-                        );
+                );
 
 
         Arrivage arrivage2 =
@@ -74,7 +74,6 @@ public class MockArrivageRepository implements ArrivageRepository {
                         "Arrivage de la periode des fetes");
 
 
-
         this.arrivages.add(arrivage1);
         this.arrivages.add(arrivage2);
         this.arrivages.add(arrivage3);
@@ -95,7 +94,7 @@ public class MockArrivageRepository implements ArrivageRepository {
 
     public void remove(Arrivage anArrivage) {
 
-        if(this.arrivages.contains(anArrivage)){
+        if (this.arrivages.contains(anArrivage)) {
 
             this.arrivages.remove(anArrivage);
         }
@@ -105,9 +104,9 @@ public class MockArrivageRepository implements ArrivageRepository {
 
         Arrivage arrivage = null;
 
-        for(Arrivage nextArrivage : this.arrivages){
+        for (Arrivage nextArrivage : this.arrivages) {
 
-            if(nextArrivage.arrivageId().equals(anArrivageId)){
+            if (nextArrivage.arrivageId().equals(anArrivageId)) {
                 arrivage = nextArrivage;
             }
         }
@@ -118,9 +117,9 @@ public class MockArrivageRepository implements ArrivageRepository {
 
         Set<Arrivage> arrivages = new HashSet<Arrivage>();
 
-        for(Arrivage nextArrivage : this.arrivages){
+        for (Arrivage nextArrivage : this.arrivages) {
 
-            if(nextArrivage.lifeSpanTime().startDate().isBefore(aDate)){
+            if (nextArrivage.lifeSpanTime().startDate().isBefore(aDate)) {
                 arrivages.add(nextArrivage);
             }
         }
@@ -131,9 +130,9 @@ public class MockArrivageRepository implements ArrivageRepository {
 
         Set<Arrivage> arrivages = new HashSet<Arrivage>();
 
-        for(Arrivage nextArrivage : this.arrivages){
+        for (Arrivage nextArrivage : this.arrivages) {
 
-            if(nextArrivage.lifeSpanTime().startDate().isAfter(aDate)){
+            if (nextArrivage.lifeSpanTime().startDate().isAfter(aDate)) {
                 arrivages.add(nextArrivage);
             }
         }
@@ -144,9 +143,9 @@ public class MockArrivageRepository implements ArrivageRepository {
 
         Set<Arrivage> arrivages = new HashSet<Arrivage>();
 
-        for(Arrivage nextArrivage : this.arrivages){
+        for (Arrivage nextArrivage : this.arrivages) {
 
-            if(nextArrivage.lifeSpanTime().startDate().isAfter(aMinDate) && nextArrivage.lifeSpanTime().startDate().isBefore(aMaxDate)){
+            if (nextArrivage.lifeSpanTime().startDate().isAfter(aMinDate) && nextArrivage.lifeSpanTime().startDate().isBefore(aMaxDate)) {
                 arrivages.add(nextArrivage);
             }
         }
@@ -157,9 +156,9 @@ public class MockArrivageRepository implements ArrivageRepository {
 
         Set<Arrivage> arrivages = new HashSet<Arrivage>();
 
-        for(Arrivage nextArrivage : this.arrivages){
+        for (Arrivage nextArrivage : this.arrivages) {
 
-            if(nextArrivage.productId().equals(aProductId)){
+            if (nextArrivage.productId().equals(aProductId)) {
                 arrivages.add(nextArrivage);
             }
         }

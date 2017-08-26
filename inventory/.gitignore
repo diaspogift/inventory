@@ -11,7 +11,9 @@
 .springBeans
 
 ### IntelliJ IDEA ###
-.idea
+out/
+target/
+.idea/
 *.iws
 *.iml
 *.ipr
@@ -23,3 +25,8 @@ nbbuild/
 dist/
 nbdist/
 .nb-gradle/
+
+/out/
+/bin/
+/.idea/
+/.gradle/

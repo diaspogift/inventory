@@ -1,8 +1,5 @@
 package com.dddtraining.inventory.application.command;
 
-import com.dddtraining.inventory.domain.model.stock.Stock;
-import com.dddtraining.inventory.domain.model.stock.StockId;
-
 import java.math.BigDecimal;
 
 public class RegisterNewStockProductArrivageCommand {
@@ -35,12 +32,12 @@ public class RegisterNewStockProductArrivageCommand {
     }
 
     public BigDecimal unitPrice() {
-        
+
         return this.unitPrice;
     }
 
     public int quantity() {
-        return  this.quantity;
+        return this.quantity;
     }
 
     public String arrivageId() {

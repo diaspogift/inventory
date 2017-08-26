@@ -1,31 +1,33 @@
 package com.dddtraining.inventory.domain.model.product;
 
-import java.math.BigDecimal;
-
 import com.dddtraining.inventory.domain.model.arrivage.Arrivage;
 import com.dddtraining.inventory.domain.model.arrivage.ArrivageId;
 import com.dddtraining.inventory.domain.model.arrivage.NewArrivageCreated;
 import com.dddtraining.inventory.domain.model.common.DomainEventPublisher;
-import com.dddtraining.inventory.domain.model.stock.*;
+import com.dddtraining.inventory.domain.model.stock.Quantity;
+import com.dddtraining.inventory.domain.model.stock.Stock;
+import com.dddtraining.inventory.domain.model.stock.StockId;
+
+import java.math.BigDecimal;
 
 public class Product {
 
-	private ProductId productId;
-	private StockId stockId;
-	private String name;
-	private String description;
-	private AvailabilityStatus status;
+    private ProductId productId;
+    private StockId stockId;
+    private String name;
+    private String description;
+    private AvailabilityStatus status;
 
 
     public Product(ProductId aProductId, String aName, String aDescription) {
 
-		this();
-		this.setProductId(aProductId);
-		this.setName(aName);
-		this.setDescription(aDescription);
-		this.setStatus(AvailabilityStatus.CREATED);
+        this();
+        this.setProductId(aProductId);
+        this.setName(aName);
+        this.setDescription(aDescription);
+        this.setStatus(AvailabilityStatus.CREATED);
 
-		//ProductCreated domain event
+        //ProductCreated domain event
 
         DomainEventPublisher
                 .instance()
@@ -37,226 +39,207 @@ public class Product {
                 ));
 
 
+    }
 
-	}
+    public Product(ProductId aProductId, StockId aStockId, String aName, String aDescription) {
 
-	public Product(ProductId aProductId, StockId aStockId, String aName, String aDescription) {
+        this();
+        this.setProductId(aProductId);
+        this.setStockId(aStockId);
+        this.setName(aName);
+        this.setDescription(aDescription);
+        this.setStatus(AvailabilityStatus.CREATED);
 
-		this();
-		this.setProductId(aProductId);
-		this.setStockId(aStockId);
-		this.setName(aName);
-		this.setDescription(aDescription);
-		this.setStatus(AvailabilityStatus.CREATED);
+        //ProductCreated domain event
 
-		//ProductCreated domain event
-
-		DomainEventPublisher
-				.instance()
-				.publish(new ProductCreated(
-						this.productId(),
-						this.name(),
-						this.description(),
-						AvailabilityStatus.CREATED
-				));
-	}
-
-
-	//*** Business logic ***//
-
-	public void changeAvailabilityStatus(AvailabilityStatus aStatus){
-		if(this.status() != aStatus){
-			this.setStatus(aStatus);
-		}
-	}
-
-	public Arrivage createNewArrivage(ArrivageId anArrivageId, Quantity aQuantity, BigDecimal aUnitPrice, String aDescription){
+        DomainEventPublisher
+                .instance()
+                .publish(new ProductCreated(
+                        this.productId(),
+                        this.name(),
+                        this.description(),
+                        AvailabilityStatus.CREATED
+                ));
+    }
 
 
-		if(this.hasNoStock()){
-			throw  new IllegalStateException("Invalid state");
-		}
+    //*** Business logic ***//
 
-		Arrivage arrivage = 
-				new Arrivage(
-						this.productId(),
-					    this.stockId(),
-					    anArrivageId, 
-						aQuantity,
-						aUnitPrice, 
-						aDescription);
+    public Product() {
+        super();
 
 
+    }
 
-		//NewArrivageCreated domain event
+    public void changeAvailabilityStatus(AvailabilityStatus aStatus) {
+        if (this.status() != aStatus) {
+            this.setStatus(aStatus);
+        }
+    }
 
-		DomainEventPublisher
-				.instance()
-				.publish(
-						new NewArrivageCreated(
-								this.productId(),
-								this.stockId(),
-								anArrivageId,
-								aQuantity,
-								aUnitPrice,
-								aDescription,
-								arrivage.lifeSpanTime()
-						));
-		return arrivage;
-}
+    public Arrivage createNewArrivage(ArrivageId anArrivageId, Quantity aQuantity, BigDecimal aUnitPrice, String aDescription) {
 
 
-	
-	public Stock createStock(StockId aStockId, int aThreshold){
-		
-		Stock stock = 
-				new Stock(
-						aStockId,
-						this.productId(),
-						new Quantity(0),
-						aThreshold
-					   );
-		return stock;
-	}
+        if (this.hasNoStock()) {
+            throw new IllegalStateException("Invalid state");
+        }
 
-	public void assignStock(Stock aStock){
+        Arrivage arrivage =
+                new Arrivage(
+                        this.productId(),
+                        this.stockId(),
+                        anArrivageId,
+                        aQuantity,
+                        aUnitPrice,
+                        aDescription);
 
 
+        //NewArrivageCreated domain event
 
-		if(this.hasNoStock()){
-			this.setStockId(aStock.stockId());
-			this.elevateAvailabilityStatus(AvailabilityStatus.STOCK_PROVIDED);
+        DomainEventPublisher
+                .instance()
+                .publish(
+                        new NewArrivageCreated(
+                                this.productId(),
+                                this.stockId(),
+                                anArrivageId,
+                                aQuantity,
+                                aUnitPrice,
+                                aDescription,
+                                arrivage.lifeSpanTime()
+                        ));
+        return arrivage;
+    }
 
+    public Stock createStock(StockId aStockId, int aThreshold) {
 
-			DomainEventPublisher.instance()
-					.publish(
-							new ProductStockAssigned(
-									aStock.stockId(),
-									this.productId()
-							)
-					);
-		}
-	}
+        Stock stock =
+                new Stock(
+                        aStockId,
+                        this.productId(),
+                        new Quantity(0),
+                        aThreshold
+                );
+        return stock;
+    }
 
-	private void elevateAvailabilityStatus(AvailabilityStatus anAvailabilityStatus) {
-		this.setStatus(anAvailabilityStatus);
-	}
-
-	private boolean hasNoStock() {
-
-		if(this.stockId() == null )
-			return true;
-		else
-			return false;
-
-	}
-
-
-
-	//*** Getters and Setters ***//
-	private void setProductId(ProductId aProductId) {
-
-		if (aProductId == null) {
-			System.out.println( this.stockId() == null );
+    public void assignStock(Stock aStock) {
 
 
-			throw new IllegalArgumentException("Invalid ProductId provided");
-		}
-		this.productId = aProductId;
-	}
-	
-	private void setStockId(StockId aStockId) {
-		
-		if (aStockId == null) {
-			throw new IllegalArgumentException("Invalid StockId provided");
-		}
-		this.stockId = aStockId;
-		
-	}
-
-	private void setName(String aName) {
-		this.name = aName;
-	}
+        if (this.hasNoStock()) {
+            this.setStockId(aStock.stockId());
+            this.elevateAvailabilityStatus(AvailabilityStatus.STOCK_PROVIDED);
 
 
+            DomainEventPublisher.instance()
+                    .publish(
+                            new ProductStockAssigned(
+                                    aStock.stockId(),
+                                    this.productId()
+                            )
+                    );
+        }
+    }
 
-	
-	private void setStatus(AvailabilityStatus aStatus) {
-		this.status = aStatus;
-	}
+    private void elevateAvailabilityStatus(AvailabilityStatus anAvailabilityStatus) {
+        this.setStatus(anAvailabilityStatus);
+    }
 
-	private void setDescription(String aDescription) {
-		this.description = aDescription;
-	}
+    private boolean hasNoStock() {
 
+        if (this.stockId() == null)
+            return true;
+        else
+            return false;
 
-	public ProductId productId() {
-		return productId;
-	}
-	
-	public StockId stockId() {
-		return this.stockId;
-	}
+    }
 
-	public String name() {
-		return name;
-	}
+    //*** Getters and Setters ***//
+    private void setProductId(ProductId aProductId) {
 
-
-
-	public AvailabilityStatus status() {
-		return this.status;
-	}
-
-
-	public String description() {
-		return description;
-	}
+        if (aProductId == null) {
+            System.out.println(this.stockId() == null);
 
 
+            throw new IllegalArgumentException("Invalid ProductId provided");
+        }
+        this.productId = aProductId;
+    }
 
+    private void setStockId(StockId aStockId) {
 
+        if (aStockId == null) {
+            throw new IllegalArgumentException("Invalid StockId provided");
+        }
+        this.stockId = aStockId;
+
+    }
+
+    private void setName(String aName) {
+        this.name = aName;
+    }
+
+    private void setStatus(AvailabilityStatus aStatus) {
+        this.status = aStatus;
+    }
+
+    private void setDescription(String aDescription) {
+        this.description = aDescription;
+    }
+
+    public ProductId productId() {
+        return productId;
+    }
+
+    public StockId stockId() {
+        return this.stockId;
+    }
+
+    public String name() {
+        return name;
+    }
+
+    public AvailabilityStatus status() {
+        return this.status;
+    }
+
+    public String description() {
+        return description;
+    }
 
     @Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((productId == null) ? 0 : productId.hashCode());
-		return result;
-	}
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((productId == null) ? 0 : productId.hashCode());
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Product other = (Product) obj;
-		if (productId == null) {
-			if (other.productId != null)
-				return false;
-		} else if (!productId.equals(other.productId))
-			return false;
-		return true;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Product other = (Product) obj;
+        if (productId == null) {
+            if (other.productId != null)
+                return false;
+        } else if (!productId.equals(other.productId))
+            return false;
+        return true;
+    }
 
-	public Product() {
-		super();
-
-
-	}
-
-
-	@Override
-	public String toString() {
-		return "Product{" +
-				"productId=" + productId +
-				", stockId=" + stockId +
-				", name='" + name + '\'' +
-				", description='" + description + '\'' +
-				", status=" + status +
-				'}';
-	}
+    @Override
+    public String toString() {
+        return "Product{" +
+                "productId=" + productId +
+                ", stockId=" + stockId +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", status=" + status +
+                '}';
+    }
 }

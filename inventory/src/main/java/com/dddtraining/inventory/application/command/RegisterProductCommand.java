@@ -1,7 +1,5 @@
 package com.dddtraining.inventory.application.command;
 
-import com.dddtraining.inventory.domain.model.product.AvailabilityStatus;
-
 public class RegisterProductCommand {
 
 

@@ -5,11 +5,11 @@ import com.dddtraining.inventory.domain.model.common.DomainEvent;
 
 import java.time.ZonedDateTime;
 
-public class ArrivageQuantityDecremented implements DomainEvent{
+public class ArrivageQuantityDecremented implements DomainEvent {
 
     private ArrivageId arrivageId;
     private Quantity quantity;
-    private  int eventVersion;
+    private int eventVersion;
     private ZonedDateTime occurredOn;
 
 
@@ -29,7 +29,6 @@ public class ArrivageQuantityDecremented implements DomainEvent{
     public Quantity quantity() {
         return quantity;
     }
-
 
 
     public void setEventVersion(int eventVersion) {

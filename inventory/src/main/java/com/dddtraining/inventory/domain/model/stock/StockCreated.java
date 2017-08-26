@@ -8,12 +8,11 @@ import java.time.ZonedDateTime;
 public class StockCreated implements DomainEvent {
 
 
-
     StockId stockId;
     ProductId productId;
     Quantity quantity;
-    private ZonedDateTime occurredOn;
     int eventVersion;
+    private ZonedDateTime occurredOn;
 
     public StockCreated(StockId stockId, ProductId productId, Quantity quantity, int threshold) {
         this.stockId = stockId;

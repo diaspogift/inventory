@@ -1,15 +1,14 @@
 package com.dddtraining.inventory.domain.model.product;
 
 import com.dddtraining.inventory.domain.model.common.DomainEvent;
-import com.dddtraining.inventory.domain.model.stock.Stock;
 import com.dddtraining.inventory.domain.model.stock.StockId;
 
 import java.time.ZonedDateTime;
 
-public class ProductStockAssigned implements DomainEvent{
+public class ProductStockAssigned implements DomainEvent {
 
     private StockId stockId;
-    private  ProductId productId;
+    private ProductId productId;
     private ZonedDateTime occurredOn;
     private int eventVersion;
 

@@ -17,16 +17,14 @@ import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ArrivageRepositoryTest {
 
     @Test
-    public void testAddArrivage(){
+    public void testAddArrivage() {
 
         ArrivageRepository arrivageRepository = new MockArrivageRepository();
 
@@ -52,7 +50,7 @@ public class ArrivageRepositoryTest {
     }
 
     @Test
-    public void testRemoveArrivage(){
+    public void testRemoveArrivage() {
 
 
         ArrivageRepository arrivageRepository = new MockArrivageRepository();
@@ -81,7 +79,7 @@ public class ArrivageRepositoryTest {
     }
 
     @Test
-    public void testArrivageOfId(){
+    public void testArrivageOfId() {
 
         ArrivageRepository arrivageRepository = new MockArrivageRepository();
 
@@ -105,7 +103,7 @@ public class ArrivageRepositoryTest {
     }
 
     @Test
-    public void testAllArrivagesPriorTo(){
+    public void testAllArrivagesPriorTo() {
 
         ArrivageRepository arrivageRepository = new MockArrivageRepository();
 
@@ -115,7 +113,7 @@ public class ArrivageRepositoryTest {
     }
 
     @Test
-    public void testAllArrivagesAfter(){
+    public void testAllArrivagesAfter() {
 
 
         ArrivageRepository arrivageRepository = new MockArrivageRepository();
@@ -126,7 +124,7 @@ public class ArrivageRepositoryTest {
     }
 
     @Test
-    public void testAllArrivagesBetweenDates(){
+    public void testAllArrivagesBetweenDates() {
 
 
         ArrivageRepository arrivageRepository = new MockArrivageRepository();
@@ -138,7 +136,7 @@ public class ArrivageRepositoryTest {
 
 
     @Test
-    public void testAllArrivageOfProductId(){
+    public void testAllArrivageOfProductId() {
 
         ArrivageRepository arrivageRepository = new MockArrivageRepository();
 
@@ -148,14 +146,13 @@ public class ArrivageRepositoryTest {
         Set<Arrivage> arrivages = arrivageRepository.allArrivagesOfProductId(new ProductId("PR12345"));
 
 
-
         assertNotNull(arrivages);
 
         assertEquals(2, arrivages.size());
     }
 
     @Test
-    public void testAllArrivages(){
+    public void testAllArrivages() {
 
         ArrivageRepository arrivageRepository = new MockArrivageRepository();
 
@@ -164,7 +161,6 @@ public class ArrivageRepositoryTest {
         Set<Arrivage> arrivages = arrivageRepository.allArrivages();
 
         assertEquals(5, arrivages.size());
-
 
 
     }

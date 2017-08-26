@@ -1,32 +1,24 @@
 package com.dddtraining.inventory;
 
-import com.dddtraining.inventory.application.ProductApplicationService;
-import com.dddtraining.inventory.application.StockApplicationService;
-import com.dddtraining.inventory.application.command.CreateProductStockCommand;
-import com.dddtraining.inventory.application.command.RegisterProductArrivageCommand;
-import com.dddtraining.inventory.application.command.RegisterProductCommand;
 import com.dddtraining.inventory.domain.model.arrivage.Arrivage;
 import com.dddtraining.inventory.domain.model.arrivage.ArrivageId;
-import com.dddtraining.inventory.domain.model.product.Product;
 import com.dddtraining.inventory.domain.model.product.ProductId;
 import com.dddtraining.inventory.domain.model.stock.Quantity;
 import com.dddtraining.inventory.domain.model.stock.Stock;
 import com.dddtraining.inventory.domain.model.stock.StockId;
-import com.dddtraining.inventory.domain.model.stock.StockProductArrivage;
-import org.springframework.boot.SpringApplication;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.jms.core.JmsTemplate;
 
 import java.math.BigDecimal;
-import java.util.Set;
 
 @SpringBootApplication
 public class InventoryApplication {
 
-	public static void main(String[] args) {
+    private static final Logger logger = LoggerFactory
+            .getLogger(InventoryApplication.class);
 
-
+    public static void main(String[] args) {
 
 
 
@@ -36,6 +28,8 @@ public class InventoryApplication {
                         new StockId("STOCK_ID_1"),
                         new ProductId("PROD_ID_1")
                 );
+
+
 
         Arrivage arrivage1 =
                 new Arrivage(
@@ -71,10 +65,8 @@ public class InventoryApplication {
         stock.addNewStockProductArrivage(arrivage3);
 
 
-
-
-        stock.clearStockOf(100);
-        stock.clearStockOf(250);
+       // stock.clearStockOf(100);
+        stock.clearStockOf(450);
 
 
 

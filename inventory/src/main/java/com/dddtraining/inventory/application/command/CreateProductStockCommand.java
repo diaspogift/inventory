@@ -1,8 +1,5 @@
 package com.dddtraining.inventory.application.command;
 
-import com.dddtraining.inventory.domain.model.product.ProductId;
-import com.dddtraining.inventory.domain.model.stock.StockId;
-
 public class CreateProductStockCommand {
 
     private String stockId;
@@ -21,7 +18,7 @@ public class CreateProductStockCommand {
     }
 
     public int theshold() {
-        return  this.treshold;
+        return this.treshold;
     }
 
     public String productId() {

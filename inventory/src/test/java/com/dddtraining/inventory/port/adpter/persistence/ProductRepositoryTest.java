@@ -1,19 +1,18 @@
 package com.dddtraining.inventory.port.adpter.persistence;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.Collection;
-
+import com.dddtraining.inventory.domain.model.product.AvailabilityStatus;
+import com.dddtraining.inventory.domain.model.product.Product;
+import com.dddtraining.inventory.domain.model.product.ProductId;
+import com.dddtraining.inventory.domain.model.product.ProductRepository;
 import com.dddtraining.inventory.port.adapter.persistence.MockProductRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.dddtraining.inventory.domain.model.product.AvailabilityStatus;
-import com.dddtraining.inventory.domain.model.product.Product;
-import com.dddtraining.inventory.domain.model.product.ProductId;
-import com.dddtraining.inventory.domain.model.product.ProductRepository;
+import java.util.Collection;
+
+import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -78,14 +77,14 @@ public class ProductRepositoryTest {
     }
 
     @Test
-    public void TestAllProductOfStatus(){
+    public void TestAllProductOfStatus() {
 
         ProductRepository productRepository = new MockProductRepository();
 
         Collection<Product> productsWithCreatedStatus = productRepository.allProductOfStatus(AvailabilityStatus.CREATED);
         assertEquals(3, productsWithCreatedStatus.size());
 
-        for(Product nextProduct : productsWithCreatedStatus){
+        for (Product nextProduct : productsWithCreatedStatus) {
 
             assertEquals(AvailabilityStatus.CREATED, nextProduct.status());
         }

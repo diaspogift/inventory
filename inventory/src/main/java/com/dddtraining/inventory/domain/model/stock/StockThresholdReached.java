@@ -10,8 +10,8 @@ public class StockThresholdReached implements DomainEvent {
     StockId stockId;
     ProductId productId;
     Quantity quantity;
-    private ZonedDateTime occurredOn;
     int eventVersion;
+    private ZonedDateTime occurredOn;
 
 
     public StockThresholdReached(StockId stockId, ProductId productId, Quantity quantity) {
@@ -20,6 +20,18 @@ public class StockThresholdReached implements DomainEvent {
         this.quantity = quantity;
         this.occurredOn = ZonedDateTime.now();
         this.eventVersion = 1;
+    }
+
+    public StockId stockId() {
+        return this.stockId;
+    }
+
+    public ProductId productId() {
+        return this.productId;
+    }
+
+    public Quantity quantity() {
+        return this.quantity;
     }
 
     public int eventVersion() {

@@ -1,21 +1,17 @@
 package com.dddtraining.inventory.domain.model.product;
 
-import com.dddtraining.inventory.domain.model.common.DomainEvent;
-import com.dddtraining.inventory.domain.model.stock.Quantity;
-import com.dddtraining.inventory.domain.model.stock.StockId;
-
-import java.io.Serializable;
-import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
-public class ProductCreated implements DomainEvent, Serializable {
+import com.dddtraining.inventory.domain.model.common.DomainEvent;
 
+public class ProductCreated implements DomainEvent{
+
+    int eventVersion;
     private ProductId productId;
     private String name;
     private String description;
     private AvailabilityStatus status;
     private ZonedDateTime occurredOn;
-    int eventVersion;
 
 
     public ProductCreated(ProductId productId, String name, String description, AvailabilityStatus status) {
@@ -28,7 +24,8 @@ public class ProductCreated implements DomainEvent, Serializable {
     }
 
 
-
+    public ProductCreated() {
+    }
 
     public ProductId productId() {
         return productId;
@@ -54,9 +51,6 @@ public class ProductCreated implements DomainEvent, Serializable {
         return this.occurredOn;
     }
 
-
-
-
     @Override
     public String toString() {
         return " \n\n\n\n ProductCreated{" +
@@ -66,9 +60,6 @@ public class ProductCreated implements DomainEvent, Serializable {
                 ", status=" + status +
                 ", occurredOn=" + occurredOn +
                 ", eventVersion=" + eventVersion +
-                '}'+"  \n\n \n\n";
-    }
-
-    public ProductCreated() {
+                '}' + "  \n\n \n\n";
     }
 }

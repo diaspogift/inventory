@@ -28,7 +28,7 @@ public class RegisterProductArrivageCommand {
     }
 
     public int quantity() {
-       return  this.quantity;
+        return this.quantity;
     }
 
     public BigDecimal unitPrice() {

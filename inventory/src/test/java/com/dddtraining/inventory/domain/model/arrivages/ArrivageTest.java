@@ -21,7 +21,7 @@ public class ArrivageTest {
 
 
     @Test
-    public void testCreateArrivage(){
+    public void testCreateArrivage() {
 
         Arrivage arrivage =
                 new Arrivage(
@@ -42,8 +42,9 @@ public class ArrivageTest {
 
 
     }
+
     @Test
-    public void changeUnitPrice(){
+    public void changeUnitPrice() {
 
         Arrivage arrivage =
                 new Arrivage(
@@ -63,7 +64,7 @@ public class ArrivageTest {
     }
 
     @Test
-    public void changeQuantity(){
+    public void changeQuantity() {
 
         Arrivage arrivage =
                 new Arrivage(

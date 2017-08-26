@@ -10,8 +10,8 @@ public class StockEmptied implements DomainEvent {
     StockId stockId;
     ProductId productId;
     Quantity quantity;
-    private ZonedDateTime occurredOn;
     int eventVersion;
+    private ZonedDateTime occurredOn;
 
 
     public StockEmptied(StockId stockId, ProductId productId, Quantity quantity) {
@@ -30,6 +30,17 @@ public class StockEmptied implements DomainEvent {
         return this.occurredOn;
     }
 
+    public StockId stockId() {
+        return this.stockId;
+    }
+
+    public ProductId productId() {
+        return this.productId;
+    }
+
+    public Quantity quantity() {
+        return this.quantity;
+    }
 
     @Override
     public String toString() {

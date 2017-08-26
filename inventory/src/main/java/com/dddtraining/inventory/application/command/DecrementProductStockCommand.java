@@ -5,10 +5,12 @@ public class DecrementProductStockCommand {
 
     private int quantity;
     private String productId;
+    private String stockId;
 
-    public DecrementProductStockCommand(int quantity, String productId) {
+    public DecrementProductStockCommand(int quantity, String productId, String stockId) {
         this.quantity = quantity;
         this.productId = productId;
+        this.stockId = stockId;
     }
 
     public int quantity() {
@@ -17,5 +19,10 @@ public class DecrementProductStockCommand {
 
     public String productId() {
         return this.productId;
+    }
+
+    public String stockId() {
+
+        return this.stockId;
     }
 }

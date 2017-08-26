@@ -10,8 +10,8 @@ public class ProductStockCreated implements DomainEvent {
     StockId stockId;
     ProductId productId;
     Quantity quantity;
-    private ZonedDateTime occurredOn;
     int eventVersion;
+    private ZonedDateTime occurredOn;
 
 
     public ProductStockCreated(StockId stockId, ProductId productId, Quantity quantity) {

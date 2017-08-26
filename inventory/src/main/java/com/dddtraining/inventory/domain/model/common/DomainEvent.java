@@ -4,6 +4,7 @@ import java.time.ZonedDateTime;
 
 public interface DomainEvent {
 
-	public int eventVersion();
-	public ZonedDateTime occurredOn();
+    public int eventVersion();
+
+    public ZonedDateTime occurredOn();
 }

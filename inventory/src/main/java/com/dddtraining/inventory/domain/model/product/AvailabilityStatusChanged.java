@@ -7,10 +7,8 @@ import java.time.ZonedDateTime;
 public class AvailabilityStatusChanged implements DomainEvent {
 
 
-
-    private ZonedDateTime occurredOn;
     int eventVersion;
-
+    private ZonedDateTime occurredOn;
 
     public int eventVersion() {
         return this.eventVersion;
