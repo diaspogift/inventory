@@ -1,17 +1,16 @@
 package com.dddtraining.inventory.port.adapter.persistence;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+
 import com.dddtraining.inventory.domain.model.product.AvailabilityStatus;
 import com.dddtraining.inventory.domain.model.product.Product;
 import com.dddtraining.inventory.domain.model.product.ProductId;
 import com.dddtraining.inventory.domain.model.product.ProductRepository;
 import com.dddtraining.inventory.domain.model.stock.StockId;
-import org.springframework.stereotype.Repository;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-
-@Repository
+//@Repository
 public class MockProductRepository implements ProductRepository {
 
     private Set<Product> allProducts;

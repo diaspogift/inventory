@@ -1,5 +1,13 @@
 package com.dddtraining.inventory.domain.model.product;
 
+import java.math.BigDecimal;
+
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
 import com.dddtraining.inventory.domain.model.arrivage.Arrivage;
 import com.dddtraining.inventory.domain.model.arrivage.ArrivageId;
 import com.dddtraining.inventory.domain.model.arrivage.NewArrivageCreated;
@@ -8,11 +16,16 @@ import com.dddtraining.inventory.domain.model.stock.Quantity;
 import com.dddtraining.inventory.domain.model.stock.Stock;
 import com.dddtraining.inventory.domain.model.stock.StockId;
 
-import java.math.BigDecimal;
-
+@Entity
 public class Product {
+	
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	private long id;
 
+	@Embedded
     private ProductId productId;
+	@Embedded
     private StockId stockId;
     private String name;
     private String description;
@@ -58,7 +71,7 @@ public class Product {
                         this.productId(),
                         this.name(),
                         this.description(),
-                        AvailabilityStatus.CREATED
+                        this.status()
                 ));
     }
 
@@ -71,7 +84,15 @@ public class Product {
 
     }
 
-    public void changeAvailabilityStatus(AvailabilityStatus aStatus) {
+    public Product(ProductId productId2, String string, String string2, AvailabilityStatus stockCleared) {
+        this();
+        this.setProductId(productId2);
+        this.setName(string);
+        this.setDescription(string2);
+        this.setStatus(stockCleared);	
+     }
+
+	public void changeAvailabilityStatus(AvailabilityStatus aStatus) {
         if (this.status() != aStatus) {
             this.setStatus(aStatus);
         }

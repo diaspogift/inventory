@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dddtraining.inventory.InventoryApplication;
+import com.dddtraining.inventory.application.command.AdjustStockArrivageQuantityCommand;
 import com.dddtraining.inventory.application.command.CreateStockCommand;
 import com.dddtraining.inventory.application.command.DecrementProductStockCommand;
 import com.dddtraining.inventory.application.command.RegisterNewStockProductArrivageCommand;
@@ -229,6 +230,29 @@ public class StockApplicationService {
     }
 
 
+    @Transactional
+	public void adjustStockArrivageQuantity(AdjustStockArrivageQuantityCommand aCommand) {
+    	
+
+    	System.out.println("\n adjustStockArrivageQuantity the command is = "+aCommand.toString());
+    	System.out.println("\n adjustStockArrivageQuantity the command is = "+aCommand.toString());
+    	System.out.println("\n adjustStockArrivageQuantity the command is = "+aCommand.toString());
+    	System.out.println("\n adjustStockArrivageQuantity the command is = "+aCommand.toString());
+    	System.out.println("\n adjustStockArrivageQuantity the command is = "+aCommand.toString());
+
+    	Stock stock = 
+    			this.stockRepository()
+    			.stockOfId(
+    					new StockId(aCommand.stockId()));
+    	
+    	if(stock != null)
+    		
+    		stock.updateProductArrivage(
+    				new StockProductArrivage(
+    						new ArrivageId(aCommand.arrivageId()),
+    						new Quantity(aCommand.quantity())));
+			
+	}
 
 
     private StockRepository stockRepository() {
@@ -238,4 +262,7 @@ public class StockApplicationService {
     public ProductRepository productRepository() {
         return this.productRepository;
     }
+
+
+
 }

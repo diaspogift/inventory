@@ -1,5 +1,8 @@
 package com.dddtraining.inventory.domain.model.stock;
 
+import javax.persistence.Embeddable;
+
+@Embeddable
 public class Quantity {
 
     private int value;

@@ -1,8 +1,8 @@
 package com.dddtraining.inventory.domain.model.stock;
 
-import com.dddtraining.inventory.domain.model.product.ProductId;
+import java.util.Collection;
 
-import java.util.Set;
+import com.dddtraining.inventory.domain.model.product.ProductId;
 
 
 public interface StockRepository {
@@ -17,9 +17,9 @@ public interface StockRepository {
 
     public Stock stockForProductOfId(ProductId aProductId);
 
-    public Set<Stock> allAvailableStock();
+    public Collection<Stock> allAvailableStock();
 
-    public Set<Stock> allStocks();
+    public Collection<Stock> allStocks();
 
 
 }

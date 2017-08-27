@@ -1,10 +1,10 @@
 package com.dddtraining.inventory.domain.model.stock;
 
-import com.dddtraining.inventory.domain.model.common.DomainEvent;
-import com.dddtraining.inventory.domain.model.product.ProductId;
-
 import java.time.ZonedDateTime;
 import java.util.Set;
+
+import com.dddtraining.inventory.domain.model.common.DomainEvent;
+import com.dddtraining.inventory.domain.model.product.ProductId;
 
 public class StockQuantityChanged implements DomainEvent {
 

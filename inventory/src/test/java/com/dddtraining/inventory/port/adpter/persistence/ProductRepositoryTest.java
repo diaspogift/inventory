@@ -1,18 +1,19 @@
 package com.dddtraining.inventory.port.adpter.persistence;
 
-import com.dddtraining.inventory.domain.model.product.AvailabilityStatus;
-import com.dddtraining.inventory.domain.model.product.Product;
-import com.dddtraining.inventory.domain.model.product.ProductId;
-import com.dddtraining.inventory.domain.model.product.ProductRepository;
-import com.dddtraining.inventory.port.adapter.persistence.MockProductRepository;
+import static org.junit.Assert.assertEquals;
+
+import java.util.Collection;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Collection;
-
-import static org.junit.Assert.assertEquals;
+import com.dddtraining.inventory.domain.model.product.AvailabilityStatus;
+import com.dddtraining.inventory.domain.model.product.Product;
+import com.dddtraining.inventory.domain.model.product.ProductId;
+import com.dddtraining.inventory.domain.model.product.ProductRepository;
+import com.dddtraining.inventory.port.adapter.persistence.MockProductRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

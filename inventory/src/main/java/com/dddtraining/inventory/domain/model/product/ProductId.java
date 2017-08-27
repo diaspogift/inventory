@@ -1,8 +1,12 @@
 package com.dddtraining.inventory.domain.model.product;
 
-//
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+
+@Embeddable
 public final class ProductId {
 
+	@Column(name="PRODUCT_ID")
     private String id;
 
     public ProductId(String anId) {

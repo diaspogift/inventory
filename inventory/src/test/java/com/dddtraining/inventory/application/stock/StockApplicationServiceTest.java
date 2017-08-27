@@ -1,4 +1,4 @@
-package com.dddtraining.inventory.application;
+package com.dddtraining.inventory.application.stock;
 
 
 import static org.junit.Assert.assertEquals;
@@ -11,7 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.dddtraining.inventory.application.command.CreateStockCommand;
-import com.dddtraining.inventory.application.stock.StockApplicationService;
 import com.dddtraining.inventory.domain.model.arrivage.ArrivageRepository;
 import com.dddtraining.inventory.domain.model.product.ProductId;
 import com.dddtraining.inventory.domain.model.product.ProductRepository;

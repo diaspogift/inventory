@@ -1,9 +1,9 @@
 package com.dddtraining.inventory.domain.model.stock;
 
+import java.time.ZonedDateTime;
+
 import com.dddtraining.inventory.domain.model.common.DomainEvent;
 import com.dddtraining.inventory.domain.model.product.ProductId;
-
-import java.time.ZonedDateTime;
 
 public class StockThresholdReached implements DomainEvent {
 

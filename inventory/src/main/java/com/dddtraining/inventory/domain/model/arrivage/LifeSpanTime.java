@@ -1,4 +1,4 @@
-package com.dddtraining.inventory.domain.model.stock;
+package com.dddtraining.inventory.domain.model.arrivage;
 
 import java.time.ZonedDateTime;
 

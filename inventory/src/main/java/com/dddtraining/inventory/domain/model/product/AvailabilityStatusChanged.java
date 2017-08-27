@@ -1,8 +1,8 @@
 package com.dddtraining.inventory.domain.model.product;
 
-import com.dddtraining.inventory.domain.model.common.DomainEvent;
-
 import java.time.ZonedDateTime;
+
+import com.dddtraining.inventory.domain.model.common.DomainEvent;
 
 public class AvailabilityStatusChanged implements DomainEvent {
 

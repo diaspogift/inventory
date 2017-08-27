@@ -1,5 +1,10 @@
 package com.dddtraining.inventory.port.adapter.persistence;
 
+import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+
 import com.dddtraining.inventory.domain.model.arrivage.Arrivage;
 import com.dddtraining.inventory.domain.model.arrivage.ArrivageId;
 import com.dddtraining.inventory.domain.model.product.ProductId;
@@ -7,14 +12,8 @@ import com.dddtraining.inventory.domain.model.stock.Quantity;
 import com.dddtraining.inventory.domain.model.stock.Stock;
 import com.dddtraining.inventory.domain.model.stock.StockId;
 import com.dddtraining.inventory.domain.model.stock.StockRepository;
-import org.springframework.stereotype.Repository;
 
-import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-
-@Repository
+//@Repository
 public class MockStockRepository implements StockRepository {
 
 

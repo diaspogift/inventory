@@ -1,13 +1,5 @@
 package com.dddtraining.inventory.port.adapter.persistence;
 
-import com.dddtraining.inventory.domain.model.arrivage.Arrivage;
-import com.dddtraining.inventory.domain.model.arrivage.ArrivageId;
-import com.dddtraining.inventory.domain.model.arrivage.ArrivageRepository;
-import com.dddtraining.inventory.domain.model.product.ProductId;
-import com.dddtraining.inventory.domain.model.stock.Quantity;
-import com.dddtraining.inventory.domain.model.stock.StockId;
-import org.springframework.stereotype.Repository;
-
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.Collections;
@@ -15,7 +7,14 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-@Repository
+import com.dddtraining.inventory.domain.model.arrivage.Arrivage;
+import com.dddtraining.inventory.domain.model.arrivage.ArrivageId;
+import com.dddtraining.inventory.domain.model.arrivage.ArrivageRepository;
+import com.dddtraining.inventory.domain.model.product.ProductId;
+import com.dddtraining.inventory.domain.model.stock.Quantity;
+import com.dddtraining.inventory.domain.model.stock.StockId;
+
+//@Repository
 public class MockArrivageRepository implements ArrivageRepository {
 
 
@@ -67,7 +66,7 @@ public class MockArrivageRepository implements ArrivageRepository {
         Arrivage arrivage5 =
                 new Arrivage(
                         new ProductId("PR12347"),
-                        new StockId("STOCK_1"),
+                        new StockId("STOCK_ID_1"),
                         new ArrivageId("ARR12349"),
                         new Quantity(5000),
                         new BigDecimal(360.50),
@@ -169,8 +168,7 @@ public class MockArrivageRepository implements ArrivageRepository {
         return Collections.unmodifiableSet(this.arrivages);
     }
 
-    @Override
-    public Arrivage sellingSotckArrivage(StockId stockId, int initialOrdering) {
-        return null;
-    }
+
+
+   
 }

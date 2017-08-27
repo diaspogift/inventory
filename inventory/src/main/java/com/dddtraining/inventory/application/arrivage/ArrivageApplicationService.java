@@ -57,9 +57,18 @@ public class ArrivageApplicationService {
 					public void handleEvent(ArrivageQuantityChanged aDomainEvent) {
 						
 						
+						System.out.println("\nMYYYYYY GOSHHH "+aDomainEvent.toString());
+						System.out.println("\nMYYYYYY GOSHHH "+aDomainEvent.toString());
+						System.out.println("\nMYYYYYY GOSHHH "+aDomainEvent.toString());
+						System.out.println("\nMYYYYYY GOSHHH "+aDomainEvent.toString());
+						System.out.println("\nMYYYYYY GOSHHH "+aDomainEvent.toString());
+						System.out.println("\nMYYYYYY GOSHHH "+aDomainEvent.toString());
+						System.out.println("\nMYYYYYY GOSHHH aDomainEvent.stockId().id() "+aDomainEvent.stockId().id());
+						
 						Map<String, String> message = new HashMap<String, String>();
 						
 						message.put("arrivageId", aDomainEvent.arrivageId().id());
+						message.put("stockId", aDomainEvent.stockId().id());
 						message.put("quantity", String.valueOf(aDomainEvent.quantity().value()));
 						
 						jmsTemplate.convertAndSend("ARRIVAGE_QUANTITY_CHANGED_QUEUE", message);

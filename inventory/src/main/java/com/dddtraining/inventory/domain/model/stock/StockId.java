@@ -1,7 +1,12 @@
 package com.dddtraining.inventory.domain.model.stock;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+
+@Embeddable
 public class StockId {
 
+	@Column(name="STOCK_ID")
     private String id;
 
 

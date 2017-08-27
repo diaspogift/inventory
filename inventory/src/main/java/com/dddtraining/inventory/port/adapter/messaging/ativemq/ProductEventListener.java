@@ -1,4 +1,4 @@
-package com.dddtraining.inventory.port.adapter.messaging;
+package com.dddtraining.inventory.port.adapter.messaging.ativemq;
 
 import java.util.Map;
 
@@ -6,13 +6,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
-import org.springframework.stereotype.Component;
 
 import com.dddtraining.inventory.InventoryApplication;
 import com.dddtraining.inventory.application.stock.StockApplicationService;
 import com.dddtraining.inventory.domain.model.stock.StockRepository;
 
-@Component
+//@Component
 public class ProductEventListener {
 	
     private static final Logger logger = LoggerFactory

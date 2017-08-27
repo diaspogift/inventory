@@ -1,4 +1,4 @@
-package com.dddtraining.inventory.application;
+package com.dddtraining.inventory.application.arrivage;
 
 import static org.junit.Assert.assertEquals;
 
@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.dddtraining.inventory.application.arrivage.ArrivageApplicationService;
 import com.dddtraining.inventory.application.command.ChangeArrivageQuantityCommand;
 import com.dddtraining.inventory.domain.model.arrivage.Arrivage;
 

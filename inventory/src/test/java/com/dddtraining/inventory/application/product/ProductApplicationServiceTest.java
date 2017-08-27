@@ -1,11 +1,11 @@
-package com.dddtraining.inventory.application;
+package com.dddtraining.inventory.application.product;
 
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.math.BigDecimal;
-import java.util.Set;
+import java.util.Collection;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,7 +18,6 @@ import com.dddtraining.inventory.application.command.CreateProductStockCommand;
 import com.dddtraining.inventory.application.command.DecrementProductStockCommand;
 import com.dddtraining.inventory.application.command.RegisterProductArrivageCommand;
 import com.dddtraining.inventory.application.command.RegisterProductCommand;
-import com.dddtraining.inventory.application.product.ProductApplicationService;
 import com.dddtraining.inventory.domain.model.arrivage.Arrivage;
 import com.dddtraining.inventory.domain.model.arrivage.ArrivageRepository;
 import com.dddtraining.inventory.domain.model.product.Product;
@@ -85,7 +84,7 @@ public class ProductApplicationServiceTest {
 
         productApplicationService.addProductArrivage(registerProductArrivageCommand1);
 
-        Set<Arrivage> arrivages =
+        Collection<Arrivage> arrivages =
                 this.arrivageRepository
                         .allArrivagesOfProductId(
                                 new ProductId(

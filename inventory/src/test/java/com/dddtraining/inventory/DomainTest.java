@@ -1,19 +1,23 @@
 package com.dddtraining.inventory;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+
 import com.dddtraining.inventory.domain.model.arrivage.ArrivageRepository;
 import com.dddtraining.inventory.domain.model.common.EventTrackingTest;
 import com.dddtraining.inventory.domain.model.product.ProductRepository;
 import com.dddtraining.inventory.domain.model.stock.StockRepository;
-import com.dddtraining.inventory.port.adapter.persistence.MockArrivageRepository;
-import com.dddtraining.inventory.port.adapter.persistence.MockProductRepository;
-import com.dddtraining.inventory.port.adapter.persistence.MockStockRepository;
 
 
+@Configurable
 public class DomainTest extends EventTrackingTest {
 
 
+	@Autowired
     protected ProductRepository productRepository;
+	@Autowired
     protected ArrivageRepository arrivageRepository;
+	@Autowired
     protected StockRepository stockRepository;
 
     public DomainTest() {
@@ -21,13 +25,10 @@ public class DomainTest extends EventTrackingTest {
 
     public void setUp() throws Exception {
 
-
-        this.productRepository = new MockProductRepository();
-        this.arrivageRepository = new MockArrivageRepository();
-        this.stockRepository = new MockStockRepository();
-
-        super.setUp();
-
+    	super.setUp();
+/*        this.productRepository = new JpaProductRepository();
+        this.arrivageRepository = new JpaArrivageRepository();
+        this.stockRepository = new JpaStockRepository();*/
     }
 
     public void tearDown() throws Exception {

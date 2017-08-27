@@ -1,6 +1,6 @@
 package com.dddtraining.inventory.domain.model.product;
 
-import java.util.Set;
+import java.util.Collection;
 
 public interface ProductRepository {
 
@@ -12,8 +12,8 @@ public interface ProductRepository {
 
     public Product productOfId(ProductId aProductId);
 
-    public Set<Product> allProductOfStatus(AvailabilityStatus aStatus);
+    public Collection<Product> allProductOfStatus(AvailabilityStatus aStatus);
 
-    public Set<Product> allProducts();
+    public Collection<Product> allProducts();
 
 }

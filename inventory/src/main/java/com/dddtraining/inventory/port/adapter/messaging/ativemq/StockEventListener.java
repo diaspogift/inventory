@@ -1,19 +1,18 @@
-package com.dddtraining.inventory.port.adapter.messaging;
+package com.dddtraining.inventory.port.adapter.messaging.ativemq;
 
-import com.dddtraining.inventory.application.product.ProductApplicationService;
-import com.dddtraining.inventory.InventoryApplication;
-import com.dddtraining.inventory.application.command.AssignedStockCommand;
-import com.dddtraining.inventory.domain.model.stock.StockRepository;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
-import org.springframework.stereotype.Component;
 
-import java.util.Map;
+import com.dddtraining.inventory.InventoryApplication;
+import com.dddtraining.inventory.application.command.AssignedStockCommand;
+import com.dddtraining.inventory.application.product.ProductApplicationService;
+import com.dddtraining.inventory.domain.model.stock.StockRepository;
 
-@Component
+//@Component
 public class StockEventListener {
 
 	
@@ -80,6 +79,9 @@ public class StockEventListener {
 
 
     	logger.debug("\n"+mesage.toString());
+    	System.out.println(" \n In STOCK_QUANTITY_CHANGED_QUEUE message ===== "+mesage.toString());
+    
+    	//TO DOOOO
 
 
     }

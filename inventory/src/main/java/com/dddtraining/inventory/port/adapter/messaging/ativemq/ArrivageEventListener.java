@@ -1,21 +1,21 @@
-package com.dddtraining.inventory.port.adapter.messaging;
+package com.dddtraining.inventory.port.adapter.messaging.ativemq;
 
-import com.dddtraining.inventory.InventoryApplication;
-import com.dddtraining.inventory.application.arrivage.ArrivageApplicationService;
-import com.dddtraining.inventory.application.product.ProductApplicationService;
-import com.dddtraining.inventory.application.stock.StockApplicationService;
-import com.dddtraining.inventory.application.command.RegisterNewStockProductArrivageCommand;
+import java.math.BigDecimal;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
-import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-import java.util.Map;
+import com.dddtraining.inventory.InventoryApplication;
+import com.dddtraining.inventory.application.arrivage.ArrivageApplicationService;
+import com.dddtraining.inventory.application.command.AdjustStockArrivageQuantityCommand;
+import com.dddtraining.inventory.application.command.RegisterNewStockProductArrivageCommand;
+import com.dddtraining.inventory.application.product.ProductApplicationService;
+import com.dddtraining.inventory.application.stock.StockApplicationService;
 
-@Component
+//@Component
 public class ArrivageEventListener {
 	
 	
@@ -74,13 +74,20 @@ public class ArrivageEventListener {
     public void handleArrivageQuantityChangedEvent(Map<String, String> message) {
 
         String arrivageId = message.get("arrivageId");
+        String stockId = message.get("stockId");
         int quantity = Integer.parseInt(message.get("quantity"));
 
         System.out.println("arrivageId = " + arrivageId);
+        System.out.println("stockId = " + stockId);
         System.out.println("quantity = " + quantity);
         
         
-        logger.debug("\n"+message.toString());
+        this.stockApplicationService()
+        .adjustStockArrivageQuantity(
+        		new AdjustStockArrivageQuantityCommand(
+        				arrivageId,
+        				stockId,
+        				quantity));
 
      
     }

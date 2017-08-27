@@ -1,15 +1,31 @@
 package com.dddtraining.inventory.domain.model.stock;
 
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
 import com.dddtraining.inventory.domain.model.arrivage.ArrivageId;
+import com.dddtraining.inventory.domain.model.arrivage.LifeSpanTime;
 import com.dddtraining.inventory.domain.model.product.ProductId;
 
+//Truely a value object 
+@Entity
 public class StockProductArrivage {
 
 
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	private long id;
+	@Embedded
     private ArrivageId arrivageId;
+	@Embedded
     private ProductId productId;
+	@Embedded
     private LifeSpanTime lifeSpanTime;
     private int ordering;
+	@Embedded
     private Quantity quantity;
 
 
@@ -23,10 +39,19 @@ public class StockProductArrivage {
 
     }
 
+    
+    public StockProductArrivage(ArrivageId anArrivageId, Quantity aQuantity) {
+
+        this.setArrivageId(anArrivageId);
+        this.setQuantity(aQuantity);
+    }
 
     //Business logic
 
-    public void reorderFrom(ArrivageId anArrivageId, int anOrdering) {
+
+
+
+	public void reorderFrom(ArrivageId anArrivageId, int anOrdering) {
         if (this.arrivageId().equals(anArrivageId)) {
             this.setOrdering(anOrdering);
         } else if (this.ordering() >= anOrdering) {
@@ -119,4 +144,15 @@ public class StockProductArrivage {
         }
         this.setQuantity(aQuantity);
     }
+
+
+	public StockProductArrivage createFrom(StockProductArrivage aStockProductArrivage) {
+		// TODO Auto-generated method stub
+		return new StockProductArrivage(
+				this.productId(), 
+				aStockProductArrivage.arrivageId(), 
+				this.lifeSpanTime(), 
+				aStockProductArrivage.quantity(), 
+				this.ordering());
+	}
 }

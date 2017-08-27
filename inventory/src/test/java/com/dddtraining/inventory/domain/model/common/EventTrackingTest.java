@@ -1,14 +1,14 @@
 package com.dddtraining.inventory.domain.model.common;
 
-import org.junit.After;
-import org.junit.Before;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.junit.After;
+import org.junit.Before;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class EventTrackingTest {
@@ -96,7 +96,6 @@ public class EventTrackingTest {
             @Override
             public void handleEvent(DomainEvent aDomainEvent) {
 
-                logger.debug("\n"+aDomainEvent.toString());
               System.out.println("\n"+aDomainEvent.toString());
 
                 handledEvents.add(aDomainEvent.getClass());

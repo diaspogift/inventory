@@ -1,23 +1,38 @@
 package com.dddtraining.inventory.domain.model.arrivage;
 
-import com.dddtraining.inventory.domain.model.common.DomainEventPublisher;
-import com.dddtraining.inventory.domain.model.product.ProductId;
-import com.dddtraining.inventory.domain.model.stock.LifeSpanTime;
-import com.dddtraining.inventory.domain.model.stock.Quantity;
-import com.dddtraining.inventory.domain.model.stock.StockId;
-
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+import com.dddtraining.inventory.domain.model.common.DomainEventPublisher;
+import com.dddtraining.inventory.domain.model.product.ProductId;
+import com.dddtraining.inventory.domain.model.stock.Quantity;
+import com.dddtraining.inventory.domain.model.stock.StockId;
+
+@Entity
 public class Arrivage {
 
+	
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	private long id;
+	@Embedded
     private ArrivageId arrivageId;
+	@Embedded
     private StockId stockId;
+	@Embedded
     private ProductId productId;
+	@Embedded
     private Quantity quantity;
     private BigDecimal unitPrice;
     private String description;
     private boolean isRunOut;
+	@Embedded
     private LifeSpanTime lifeSpanTime;
 
 
@@ -64,7 +79,8 @@ public class Arrivage {
         DomainEventPublisher.instance()
         .publish(
         		new ArrivageQuantityChanged(
-        				this.arrivageId, 
+        				this.arrivageId,
+        				this.stockId(),
         				this.quantity()));
     }
 

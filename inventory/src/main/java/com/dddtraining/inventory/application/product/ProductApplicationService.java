@@ -1,8 +1,8 @@
 package com.dddtraining.inventory.application.product;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
@@ -21,6 +21,7 @@ import com.dddtraining.inventory.domain.model.arrivage.ArrivageRepository;
 import com.dddtraining.inventory.domain.model.arrivage.NewArrivageCreated;
 import com.dddtraining.inventory.domain.model.common.DomainEventPublisher;
 import com.dddtraining.inventory.domain.model.common.DomainEventSubscriber;
+import com.dddtraining.inventory.domain.model.product.AvailabilityStatus;
 import com.dddtraining.inventory.domain.model.product.Product;
 import com.dddtraining.inventory.domain.model.product.ProductCreated;
 import com.dddtraining.inventory.domain.model.product.ProductId;
@@ -31,6 +32,7 @@ import com.dddtraining.inventory.domain.model.stock.Stock;
 import com.dddtraining.inventory.domain.model.stock.StockCreated;
 import com.dddtraining.inventory.domain.model.stock.StockEmptied;
 import com.dddtraining.inventory.domain.model.stock.StockId;
+import com.dddtraining.inventory.domain.model.stock.StockProductArrivage;
 import com.dddtraining.inventory.domain.model.stock.StockQuantityChanged;
 import com.dddtraining.inventory.domain.model.stock.StockRepository;
 import com.dddtraining.inventory.domain.model.stock.StockThresholdReached;
@@ -59,15 +61,28 @@ public class ProductApplicationService {
     }
 
     @Transactional(readOnly = true)
-    public Set<Product> products() {
+    public Collection<Product> products() {
 
-        Set<Product> products =
+        Collection<Product> products =
                 this.productRepository().allProducts();
 
         return products;
     }
 
+    
+    //TO DO 
+    @Transactional
+    public Collection<Product> productWithStatus(String status) {
+    	
+    	
 
+        Collection<Product> products =
+                this.productRepository().allProductOfStatus(AvailabilityStatus.valueOf(status));
+
+        return products;
+	}
+    
+    
     @Transactional
     public void addProduct(RegisterProductCommand aCommand) {
 
@@ -277,6 +292,17 @@ public class ProductApplicationService {
                     	
                     	message.put("stockId", aDomainEvent.stockId().id());
                     	message.put("productId", aDomainEvent.productId().id());
+                    	message.put("quantity", String.valueOf(aDomainEvent.quantity()));
+                    	
+                    	for(StockProductArrivage next : aDomainEvent.allModifiedArrivages()){
+                    
+                        	message.put(next.arrivageId().id(), next.toString());
+
+                    	}
+                    	
+                    	
+                    	message.put("eventVersion", String.valueOf(aDomainEvent.eventVersion()));
+                    	message.put("occurredOn", String.valueOf(aDomainEvent.occurredOn()));
 
                     	jmsTemplate.convertAndSend("STOCK_QUANTITY_CHANGED_QUEUE", message);
                     }
@@ -350,10 +376,6 @@ public class ProductApplicationService {
         DomainEventPublisher.instance().subscribe(subscriber);
 
 
-        Set<Product> products =
-                this.productRepository()
-                        .allProducts();
-
 
         Product product =
                 this.productRepository()
@@ -377,9 +399,9 @@ public class ProductApplicationService {
 
     //TODO not tested
     @Transactional(readOnly = true)
-    public Set<Arrivage> productArrivages(String productId) {
+    public Collection<Arrivage> productArrivages(String productId) {
 
-        Set<Arrivage> arrivages =
+        Collection<Arrivage> arrivages =
                 this.arrivageRepository()
                         .allArrivagesOfProductId(new ProductId(productId));
 
@@ -402,4 +424,6 @@ public class ProductApplicationService {
     public JmsTemplate jmsTemplate() {
         return this.jmsTemplate;
     }
+
+	
 }

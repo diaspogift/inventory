@@ -1,7 +1,12 @@
 package com.dddtraining.inventory.domain.model.arrivage;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+
+@Embeddable
 public class ArrivageId {
 
+	@Column(name="ARRIVAGE_ID")
     private String id;
 
     public ArrivageId(String anId) {
@@ -50,4 +55,13 @@ public class ArrivageId {
 
         return this.id;
     }
+
+
+	public ArrivageId() {
+		super();
+	}
+    
+    
+    
+    
 }

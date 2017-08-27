@@ -1,13 +1,12 @@
 package com.dddtraining.inventory.domain.model.arrivage;
 
-import com.dddtraining.inventory.domain.model.common.DomainEvent;
-import com.dddtraining.inventory.domain.model.product.ProductId;
-import com.dddtraining.inventory.domain.model.stock.LifeSpanTime;
-import com.dddtraining.inventory.domain.model.stock.Quantity;
-import com.dddtraining.inventory.domain.model.stock.StockId;
-
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
+
+import com.dddtraining.inventory.domain.model.common.DomainEvent;
+import com.dddtraining.inventory.domain.model.product.ProductId;
+import com.dddtraining.inventory.domain.model.stock.Quantity;
+import com.dddtraining.inventory.domain.model.stock.StockId;
 
 public class NewArrivageCreated implements DomainEvent {
 

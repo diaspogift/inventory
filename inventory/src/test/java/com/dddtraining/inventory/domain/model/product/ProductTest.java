@@ -1,44 +1,60 @@
 package com.dddtraining.inventory.domain.model.product;
 
-import com.dddtraining.inventory.DomainTest;
-import com.dddtraining.inventory.domain.model.arrivage.Arrivage;
-import com.dddtraining.inventory.domain.model.arrivage.ArrivageId;
-import com.dddtraining.inventory.domain.model.arrivage.NewArrivageCreated;
-import com.dddtraining.inventory.domain.model.stock.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.math.BigDecimal;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import com.dddtraining.inventory.DomainTest;
+import com.dddtraining.inventory.domain.model.arrivage.Arrivage;
+import com.dddtraining.inventory.domain.model.arrivage.ArrivageId;
+import com.dddtraining.inventory.domain.model.arrivage.NewArrivageCreated;
+import com.dddtraining.inventory.domain.model.stock.Quantity;
+import com.dddtraining.inventory.domain.model.stock.Stock;
+import com.dddtraining.inventory.domain.model.stock.StockCreated;
+import com.dddtraining.inventory.domain.model.stock.StockId;
+import com.dddtraining.inventory.domain.model.stock.StockProductArrivage;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@Transactional
 public class ProductTest extends DomainTest {
 
 
     @Test
     public void testCreateProduct() {
+    	
+    	
+    	
 
 
         Product product =
                 new Product(
-                        new ProductId("P12345"),
+                        this.productRepository.nextIdentity(),
                         "My product name",
                         "Nails for soft walls");
 
 
         this.productRepository.add(product);
+        
+        Product productFound = 
+        		this.productRepository.productOfId(product.productId());
 
         assertNotNull(product);
-        assertEquals(new ProductId("P12345"), product.productId());
+        assertNotNull(productFound);
+        assertEquals(product.productId(), productFound.productId());
         assertEquals("My product name", product.name());
         assertEquals("Nails for soft walls", product.description());
         assertEquals(AvailabilityStatus.CREATED, product.status());
-
+        assertEquals(product, productFound);
+        
+        
         this.expectedEvents(1);
         this.expectedEvent(ProductCreated.class);
 

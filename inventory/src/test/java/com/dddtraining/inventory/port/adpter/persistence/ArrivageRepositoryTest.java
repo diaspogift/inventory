@@ -1,6 +1,19 @@
 package com.dddtraining.inventory.port.adpter.persistence;
 
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
+import java.math.BigDecimal;
+import java.time.ZonedDateTime;
+import java.util.Collection;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+
 import com.dddtraining.inventory.domain.model.arrivage.Arrivage;
 import com.dddtraining.inventory.domain.model.arrivage.ArrivageId;
 import com.dddtraining.inventory.domain.model.arrivage.ArrivageRepository;
@@ -8,16 +21,6 @@ import com.dddtraining.inventory.domain.model.product.ProductId;
 import com.dddtraining.inventory.domain.model.stock.Quantity;
 import com.dddtraining.inventory.domain.model.stock.StockId;
 import com.dddtraining.inventory.port.adapter.persistence.MockArrivageRepository;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
-
-import java.math.BigDecimal;
-import java.time.ZonedDateTime;
-import java.util.Set;
-
-import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -107,7 +110,7 @@ public class ArrivageRepositoryTest {
 
         ArrivageRepository arrivageRepository = new MockArrivageRepository();
 
-        Set<Arrivage> allArrivagesPriorToNow = arrivageRepository.allArrivagesPriorTo(ZonedDateTime.now().plusDays(1l));
+        Collection<Arrivage> allArrivagesPriorToNow = arrivageRepository.allArrivagesPriorTo(ZonedDateTime.now().plusDays(1l));
 
         assertEquals(5, allArrivagesPriorToNow.size());
     }
@@ -118,7 +121,7 @@ public class ArrivageRepositoryTest {
 
         ArrivageRepository arrivageRepository = new MockArrivageRepository();
 
-        Set<Arrivage> allArrivagesPriorToNow = arrivageRepository.allArrivagesAfter(ZonedDateTime.now().minusDays(1l));
+        Collection<Arrivage> allArrivagesPriorToNow = arrivageRepository.allArrivagesAfter(ZonedDateTime.now().minusDays(1l));
 
         assertEquals(5, allArrivagesPriorToNow.size());
     }
@@ -129,7 +132,7 @@ public class ArrivageRepositoryTest {
 
         ArrivageRepository arrivageRepository = new MockArrivageRepository();
 
-        Set<Arrivage> allArrivagesPriorToNow = arrivageRepository.allArrivagesBetweenDates(ZonedDateTime.now().minusDays(1l), ZonedDateTime.now().plusDays(1l));
+        Collection<Arrivage> allArrivagesPriorToNow = arrivageRepository.allArrivagesBetweenDates(ZonedDateTime.now().minusDays(1l), ZonedDateTime.now().plusDays(1l));
 
         assertEquals(5, allArrivagesPriorToNow.size());
     }
@@ -143,7 +146,7 @@ public class ArrivageRepositoryTest {
         assertEquals(5, arrivageRepository.allArrivages().size());
 
 
-        Set<Arrivage> arrivages = arrivageRepository.allArrivagesOfProductId(new ProductId("PR12345"));
+        Collection<Arrivage> arrivages = arrivageRepository.allArrivagesOfProductId(new ProductId("PR12345"));
 
 
         assertNotNull(arrivages);
@@ -158,7 +161,7 @@ public class ArrivageRepositoryTest {
 
         assertEquals(5, arrivageRepository.allArrivages().size());
 
-        Set<Arrivage> arrivages = arrivageRepository.allArrivages();
+        Collection<Arrivage> arrivages = arrivageRepository.allArrivages();
 
         assertEquals(5, arrivages.size());
 

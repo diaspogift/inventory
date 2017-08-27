@@ -1,31 +1,33 @@
 package com.dddtraining.inventory.domain.model.stock;
 
-import com.dddtraining.inventory.InventoryApplication;
-import com.dddtraining.inventory.domain.model.arrivage.Arrivage;
-import com.dddtraining.inventory.domain.model.arrivage.ArrivageId;
-import com.dddtraining.inventory.domain.model.arrivage.NewArrivageCreated;
-import com.dddtraining.inventory.domain.model.common.EventTrackingTest;
-import com.dddtraining.inventory.domain.model.product.Product;
-import com.dddtraining.inventory.domain.model.product.ProductCreated;
-import com.dddtraining.inventory.domain.model.product.ProductId;
-import com.dddtraining.inventory.domain.model.product.ProductStockAssigned;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.math.BigDecimal;
+import java.time.ZonedDateTime;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.time.ZonedDateTime;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import com.dddtraining.inventory.InventoryApplication;
+import com.dddtraining.inventory.domain.model.arrivage.Arrivage;
+import com.dddtraining.inventory.domain.model.arrivage.ArrivageId;
+import com.dddtraining.inventory.domain.model.arrivage.NewArrivageCreated;
+import com.dddtraining.inventory.domain.model.product.Product;
+import com.dddtraining.inventory.domain.model.product.ProductCreated;
+import com.dddtraining.inventory.domain.model.product.ProductId;
+import com.dddtraining.inventory.domain.model.product.ProductStockAssigned;
 
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class StockTest extends EventTrackingTest {
+@Transactional
+public class StockTest extends StockCommonTest {
 
 
     private static final Logger logger = LoggerFactory
@@ -35,19 +37,39 @@ public class StockTest extends EventTrackingTest {
 
 
 
+    	Product product =
+                new Product(
+                        this.productRepository.nextIdentity(),
+                        "My product name",
+                        "Nails for soft walls");
 
+
+        this.productRepository.add(product);
+        
+        
         Stock stock =
                 new Stock(
-                        new StockId("ST12345"),
-                        new ProductId("PR12345"));
+                		this.stockRepository.nextIdentity(),
+                		product.productId());
+        
+        
 
+        this.stockRepository.add(stock);
+        
+        
+        Stock stockFound = 
+        		this.stockRepository.stockOfId(stock.stockId());
+
+        
         assertNotNull(stock);
-        assertEquals(new StockId("ST12345"), stock.stockId());
-        assertEquals(new ProductId("PR12345"), stock.productId());
+        assertEquals(stockFound.stockId(), stock.stockId());
+        assertEquals(stockFound.productId(), stock.productId());
         assertEquals(new Quantity(0), stock.quantity());
+        assertEquals(0, stock.threshold());
 
 
-        this.expectedEvents(1);
+        this.expectedEvents(2);
+        this.expectedEvent(ProductCreated.class, 1);
         this.expectedEvent(StockCreated.class, 1);
 
 
@@ -58,53 +80,14 @@ public class StockTest extends EventTrackingTest {
     public void testClearStockOfNoThresholdReached() {
 
 
-        Stock stock =
-                new Stock(
-                        new StockId("STOCK_ID_1"),
-                        new ProductId("PROD_ID_1")
-                );
-
-        Arrivage arrivage1 =
-                new Arrivage(
-                        new ProductId("PROD_ID_1"),
-                        new StockId("STOCK_ID_1"),
-                        new ArrivageId("ARR_ID_1"),
-                        new Quantity(300),
-                        new BigDecimal(105),
-                        "Des"
-                );
-
-        Arrivage arrivage2 =
-                new Arrivage(
-                        new ProductId("PROD_ID_1"),
-                        new StockId("STOCK_ID_1"),
-                        new ArrivageId("ARR_ID_2"),
-                        new Quantity(150),
-                        new BigDecimal(110),
-                        "Des"
-                );
-        Arrivage arrivage3 =
-                new Arrivage(
-                        new ProductId("PROD_ID_1"),
-                        new StockId("STOCK_ID_1"),
-                        new ArrivageId("ARR_ID_3"),
-                        new Quantity(100),
-                        new BigDecimal(85),
-                        "Des"
-                );
-
-        stock.addNewStockProductArrivage(arrivage1);
-        stock.addNewStockProductArrivage(arrivage2);
-        stock.addNewStockProductArrivage(arrivage3);
+    	Stock stock = this.StockWithThreeProductArrivages();
 
 
         assertEquals(new Quantity(550), stock.quantity());
         assertNotNull(stock.stockProductArrivages());
         assertEquals(3, stock.stockProductArrivages().size());
 
-
         //First clear
-
         stock.clearStockOf(500);
 
 
@@ -399,6 +382,113 @@ public class StockTest extends EventTrackingTest {
         this.expectedEvent(StockCreated.class);
 
 
+    }
+    
+    @Test
+    public void testStockUpdateProductArrivage(){
+    	
+      	 Stock stock =
+                 new Stock(
+                         new StockId("STOCK_ID_1"),
+                         new ProductId("PROD_ID_1"),
+                         new Quantity(0),
+                         20
+                    
+                 );
+
+         Arrivage arrivage1 =
+                 new Arrivage(
+                         new ProductId("PROD_ID_1"),
+                         new StockId("STOCK_ID_1"),
+                         new ArrivageId("ARR_ID_1"),
+                         new Quantity(10),
+                         new BigDecimal(105),
+                         "Des"
+                 );
+
+         Arrivage arrivage2 =
+                 new Arrivage(
+                         new ProductId("PROD_ID_1"),
+                         new StockId("STOCK_ID_1"),
+                         new ArrivageId("ARR_ID_2"),
+                         new Quantity(30),
+                         new BigDecimal(110),
+                         "Des"
+                 );
+         Arrivage arrivage3 =
+                 new Arrivage(
+                         new ProductId("PROD_ID_1"),
+                         new StockId("STOCK_ID_1"),
+                         new ArrivageId("ARR_ID_3"),
+                         new Quantity(10),
+                         new BigDecimal(85),
+                         "Des"
+                 );
+
+         stock.addNewStockProductArrivage(arrivage1);
+         stock.addNewStockProductArrivage(arrivage2);
+         stock.addNewStockProductArrivage(arrivage3);
+         
+         
+
+    
+
+         assertEquals(new Quantity(50), stock.quantity());
+         assertEquals(20, stock.threshold());
+
+
+
+
+         StockProductArrivage stockProductArrivage = 
+        		 new StockProductArrivage(
+        				 arrivage3.arrivageId(),
+        				 new Quantity(60));
+         
+         stock.updateProductArrivage(stockProductArrivage);
+         
+         
+         
+         StockProductArrivage supposellyNotModifiedArrivage1 = null;
+         StockProductArrivage supposellyNotModifiedArrivage2 = null;
+         StockProductArrivage supposellyModifiedArrivage3 = null;
+
+         for (StockProductArrivage next : stock.stockProductArrivages()) {
+
+
+
+             if (next.ordering() == 1) {
+
+                 supposellyNotModifiedArrivage1 = next;
+             }
+             else if (next.ordering() == 2) {
+
+                 supposellyNotModifiedArrivage2 = next;
+             }
+             else if (next.ordering() == 3) {
+
+            	 
+
+                 supposellyModifiedArrivage3 = next;
+             }
+         }
+
+
+
+         
+         assertEquals(new Quantity(100), stock.quantity());
+         assertEquals(arrivage3.arrivageId(), supposellyModifiedArrivage3.arrivageId());
+         assertEquals(arrivage3.lifeSpanTime(), supposellyModifiedArrivage3.lifeSpanTime());
+         assertEquals(new Quantity(60), supposellyModifiedArrivage3.quantity());
+         assertEquals(arrivage3.productId(), supposellyModifiedArrivage3.productId());
+         assertEquals(3, supposellyModifiedArrivage3.ordering());
+         
+         
+         assertEquals(20, stock.threshold());
+
+
+         this.expectedEvents(1);
+         this.expectedEvent(StockCreated.class);
+    	
     }
 
 }
