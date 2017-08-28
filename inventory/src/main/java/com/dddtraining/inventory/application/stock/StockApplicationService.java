@@ -101,6 +101,7 @@ public class StockApplicationService {
     }
 
 
+    @Transactional
     public void addProductArrivageToStock(RegisterNewStockProductArrivageCommand aCommand) {
 
 
@@ -215,7 +216,8 @@ public class StockApplicationService {
 
         Stock stock =
                 this.stockRepository()
-                        .stockOfId(new StockId(aCommand.stockId()));
+                        .stockForProductOfId(new ProductId( aCommand.productId()));
+        
 
         DomainEventPublisher.instance().subscribe(subscriber1);
         DomainEventPublisher.instance().subscribe(subscriber2);
@@ -234,10 +236,6 @@ public class StockApplicationService {
 	public void adjustStockArrivageQuantity(AdjustStockArrivageQuantityCommand aCommand) {
     	
 
-    	System.out.println("\n adjustStockArrivageQuantity the command is = "+aCommand.toString());
-    	System.out.println("\n adjustStockArrivageQuantity the command is = "+aCommand.toString());
-    	System.out.println("\n adjustStockArrivageQuantity the command is = "+aCommand.toString());
-    	System.out.println("\n adjustStockArrivageQuantity the command is = "+aCommand.toString());
     	System.out.println("\n adjustStockArrivageQuantity the command is = "+aCommand.toString());
 
     	Stock stock = 

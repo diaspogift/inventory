@@ -95,9 +95,6 @@ public class EventTrackingTest {
         DomainEventPublisher.instance().subscribe(new DomainEventSubscriber<DomainEvent>() {
             @Override
             public void handleEvent(DomainEvent aDomainEvent) {
-
-              System.out.println("\n"+aDomainEvent.toString());
-
                 handledEvents.add(aDomainEvent.getClass());
             }
 

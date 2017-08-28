@@ -94,4 +94,18 @@ public class LifeSpanTime {
                 ", endDate=" + endDate +
                 '}';
     }
+
+    //
+	public ZonedDateTime getStartDate() {
+		return startDate;
+	}
+
+
+	public ZonedDateTime getEndDate() {
+		return endDate;
+	}
+    
+ 
+    
+    
 }

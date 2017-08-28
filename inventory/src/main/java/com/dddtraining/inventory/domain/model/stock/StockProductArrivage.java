@@ -155,4 +155,44 @@ public class StockProductArrivage {
 				aStockProductArrivage.quantity(), 
 				this.ordering());
 	}
+
+
+	public StockProductArrivage() {
+		super();
+	}
+	//
+
+
+	public long getId() {
+		return id;
+	}
+
+
+	public ArrivageId getArrivageId() {
+		return arrivageId;
+	}
+
+
+	public ProductId getProductId() {
+		return productId;
+	}
+
+
+	public LifeSpanTime getLifeSpanTime() {
+		return lifeSpanTime;
+	}
+
+
+	public int getOrdering() {
+		return ordering;
+	}
+
+
+	public Quantity getQuantity() {
+		return quantity;
+	}
+	
+	
+	
+	
 }

@@ -27,5 +27,11 @@ public class RegisterProductCommand {
         return this.description;
     }
 
+	@Override
+	public String toString() {
+		return "RegisterProductCommand [productId=" + productId + ", name=" + name + ", description=" + description
+				+ "]";
+	}
+
 
 }

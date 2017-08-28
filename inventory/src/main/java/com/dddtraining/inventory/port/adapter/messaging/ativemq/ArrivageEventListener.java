@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
+import org.springframework.stereotype.Component;
 
 import com.dddtraining.inventory.InventoryApplication;
 import com.dddtraining.inventory.application.arrivage.ArrivageApplicationService;
@@ -15,7 +16,7 @@ import com.dddtraining.inventory.application.command.RegisterNewStockProductArri
 import com.dddtraining.inventory.application.product.ProductApplicationService;
 import com.dddtraining.inventory.application.stock.StockApplicationService;
 
-//@Component
+@Component
 public class ArrivageEventListener {
 	
 	
@@ -45,19 +46,6 @@ public class ArrivageEventListener {
         String occurredOn = mesage.get("occurredOn");
 
 
-        System.out.println("\n Recieved message for NewArrivageCreated Event");
-        System.out.println("stockId = " + stockId);
-        System.out.println("arrivageId = " + arrivageId);
-        System.out.println("productId = " + productId);
-        System.out.println("quantity = " + quantity);
-        System.out.println("unitPrice = " + unitPrice);
-        System.out.println("description = " + description);
-        System.out.println("lifeSpanTimeStartDate = " + lifeSpanTimeStartDate);
-        System.out.println("lifeSpanTimeEndDate = " + lifeSpanTimeEndDate);
-        System.out.println("enventVersion = " + enventVersion);
-        System.out.println("occurredOn = " + occurredOn);
-
-
         this.stockApplicationService()
                 .addProductArrivageToStock(
                         new RegisterNewStockProductArrivageCommand(
@@ -77,10 +65,7 @@ public class ArrivageEventListener {
         String stockId = message.get("stockId");
         int quantity = Integer.parseInt(message.get("quantity"));
 
-        System.out.println("arrivageId = " + arrivageId);
-        System.out.println("stockId = " + stockId);
-        System.out.println("quantity = " + quantity);
-        
+   
         
         this.stockApplicationService()
         .adjustStockArrivageQuantity(

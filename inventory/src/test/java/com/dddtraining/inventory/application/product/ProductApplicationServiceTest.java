@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.math.BigDecimal;
-import java.util.Collection;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,17 +12,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.dddtraining.inventory.application.command.AugmentProductStockCommand;
 import com.dddtraining.inventory.application.command.CreateProductStockCommand;
 import com.dddtraining.inventory.application.command.DecrementProductStockCommand;
 import com.dddtraining.inventory.application.command.RegisterProductArrivageCommand;
 import com.dddtraining.inventory.application.command.RegisterProductCommand;
+import com.dddtraining.inventory.application.stock.StockApplicationService;
 import com.dddtraining.inventory.domain.model.arrivage.Arrivage;
+import com.dddtraining.inventory.domain.model.arrivage.ArrivageId;
 import com.dddtraining.inventory.domain.model.arrivage.ArrivageRepository;
 import com.dddtraining.inventory.domain.model.product.Product;
 import com.dddtraining.inventory.domain.model.product.ProductId;
 import com.dddtraining.inventory.domain.model.product.ProductRepository;
-import com.dddtraining.inventory.domain.model.stock.Quantity;
 import com.dddtraining.inventory.domain.model.stock.Stock;
 import com.dddtraining.inventory.domain.model.stock.StockId;
 import com.dddtraining.inventory.domain.model.stock.StockRepository;
@@ -35,6 +34,8 @@ public class ProductApplicationServiceTest {
 
     @Autowired
     private ProductApplicationService productApplicationService;
+    @Autowired
+    private StockApplicationService stockApplicationService;
     @Autowired
     private ProductRepository productRepository;
     @Autowired
@@ -72,51 +73,95 @@ public class ProductApplicationServiceTest {
     public void testAddProductArrivage() {
 
 
-        RegisterProductArrivageCommand registerProductArrivageCommand1 =
-                new RegisterProductArrivageCommand(
-                        "PRODUCT_ID_1",
-                        "ARRI_OF_ID_N",
-                        100,
-                        new BigDecimal(1500),
-                        "Arrivage de noel"
-                );
-
-
-        productApplicationService.addProductArrivage(registerProductArrivageCommand1);
-
-        Collection<Arrivage> arrivages =
-                this.arrivageRepository
-                        .allArrivagesOfProductId(
-                                new ProductId(
-                                        "PRODUCT_ID_1")
-                        );
-
-        assertNotNull(arrivages);
-        assertEquals(1, arrivages.size());
+    	ProductId productId = this.productRepository().nextIdentity();
+    	StockId stockId = this.stockRepository().nextIdentity();
+    	ArrivageId arrivageId1 = this.arrivageRepository().nextIdentity();
+    	ArrivageId arrivageId2 = this.arrivageRepository().nextIdentity();
+    	
+    	RegisterProductCommand registerProductCommand = new RegisterProductCommand(productId.id(), "PRODUCT NAME", "PRODUCT DESCRIPTION");
+    
+    	
+    	this.productApplicationService().addProduct(registerProductCommand);
+    
+    	this.productApplicationService().creatProductStock(new CreateProductStockCommand(stockId.id(), productId.id(), 100));
+    	
+    	this.productApplicationService()
+    	.addProductArrivage(
+    			new RegisterProductArrivageCommand(
+    					productId.id(), arrivageId1.id(),
+    					250,
+    					new BigDecimal(150),
+    					"ARRIVAGE DESCRPTION 1"));
+    	
+    	try {
+			Thread.sleep(2000l);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+    	
+    	
+    	
+    	this.productApplicationService()
+    	.addProductArrivage(
+    			new RegisterProductArrivageCommand(
+    					productId.id(), arrivageId2.id(),
+    					300,
+    					new BigDecimal(250),
+    					"ARRIVAGE DESCRPTION 2"));
+    	
+      	try {
+    			Thread.sleep(2000l);
+    	} catch (InterruptedException e) {
+    			e.printStackTrace();
+    	}
+      	
+        Stock modifiedStock = 
+        		this.stockRepository().stockOfId(stockId);
+        Arrivage addedArrivage1 = 
+        		this.arrivageRepository().arrivgeOfId(arrivageId1);
+        Arrivage addedArrivage2 = 
+        		this.arrivageRepository().arrivgeOfId(arrivageId2);
+        
+        assertEquals(550, modifiedStock.quantity().value());
+        assertEquals(250, addedArrivage1.quantity().value());
+        assertEquals(300, addedArrivage2.quantity().value());
+        
+        
+        
+        
     }
 
     @Test
     public void testCreatProductStock() {
+    	
+    	
+    	ProductId productId = this.productRepository().nextIdentity();
+    	StockId stockId = this.stockRepository().nextIdentity();
+    	
+    	RegisterProductCommand registerProductCommand = new RegisterProductCommand(productId.id(), "PRODUCT NAME", "PRODUCT DESCRIPTION");
+    
+    	
+    	this.productApplicationService().addProduct(registerProductCommand);
+    
+    	this.productApplicationService().creatProductStock(new CreateProductStockCommand(stockId.id(), productId.id(), 100));
+    	
+    	
+    	try {
+			Thread.sleep(2000l);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+    	
+    	Product product = 
+    			this.productApplicationService()
+    			.product(productId.id());
+    	
+    	Stock stock = 
+    			this.stockApplicationService.stock(stockId.id());
+    	
+    	assertEquals(stock.stockId(), product.stockId());
 
-        CreateProductStockCommand createProductStockCommand =
-                new CreateProductStockCommand(
-                        "STOCK_ID_20",
-                        "PRODUCT_ID_2",
-                        1000
-                );
 
-        productApplicationService.creatProductStock(createProductStockCommand);
-
-        Product product =
-                productRepository.productOfId(new ProductId("PRODUCT_ID_2"));
-
-        Stock stock =
-                stockRepository.stockOfId(new StockId("STOCK_ID_20"));
-
-        assertNotNull(product);
-        assertNotNull(stock);
-
-        assertEquals(product.productId(), stock.productId());
 
 
     }
@@ -126,58 +171,102 @@ public class ProductApplicationServiceTest {
 
     @Test
     public void testDecrementProductStock() {
-
-        DecrementProductStockCommand decrementProductStockCommand =
-                new DecrementProductStockCommand(
-                        500,
-                        "PRODUCT_ID_1",
-                        "STOCK_ID_1");
-
-        Stock stock1 =
-                this.stockRepository
-                        .stockForProductOfId(
-                                new ProductId(decrementProductStockCommand.productId()));
-
-        assertNotNull(stock1);
-        assertEquals(new Quantity(550), stock1.quantity());
-
+    	
+    	
+    	ProductId productId = this.productRepository().nextIdentity();
+    	StockId stockId = this.stockRepository().nextIdentity();
+    	ArrivageId arrivageId1 = this.arrivageRepository().nextIdentity();
+    	ArrivageId arrivageId2 = this.arrivageRepository().nextIdentity();
+    	
+    	RegisterProductCommand registerProductCommand = new RegisterProductCommand(productId.id(), "PRODUCT NAME", "PRODUCT DESCRIPTION");
+    
+    	
+    	this.productApplicationService().addProduct(registerProductCommand);
+    
+    	this.productApplicationService().creatProductStock(new CreateProductStockCommand(stockId.id(), productId.id(), 100));
+    	
+    	this.productApplicationService()
+    	.addProductArrivage(
+    			new RegisterProductArrivageCommand(
+    					productId.id(), arrivageId1.id(),
+    					250,
+    					new BigDecimal(150),
+    					"ARRIVAGE DESCRPTION 1"));
+    	
+    	try {
+			Thread.sleep(2000l);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+    	
+    	
+    	
+    	this.productApplicationService()
+    	.addProductArrivage(
+    			new RegisterProductArrivageCommand(
+    					productId.id(), arrivageId2.id(),
+    					300,
+    					new BigDecimal(250),
+    					"ARRIVAGE DESCRPTION 2"));
+    	
+      	try {
+    			Thread.sleep(2000l);
+    	} catch (InterruptedException e) {
+    			e.printStackTrace();
+    	}
+    	
+    	
+      	
+      	
         this.productApplicationService
                 .decrementProductStock(
-                        decrementProductStockCommand);
+                		 new DecrementProductStockCommand(
+                                 350,
+                                 productId.id()));
+        
+        
+        
+      	try {
+    			Thread.sleep(5000l);
+    	} catch (InterruptedException e) {
+    			e.printStackTrace();
+    	}
+        
+        Stock modifiedStock = 
+        		this.stockRepository().stockOfId(stockId);
+        Arrivage modifiedArrivage1 = 
+        		this.arrivageRepository().arrivgeOfId(arrivageId1);
+        Arrivage modifiedArrivage2 = 
+        		this.arrivageRepository().arrivgeOfId(arrivageId2);
+        
+        
+        assertEquals(200, modifiedStock.quantity().value());
+        assertEquals(0, modifiedArrivage1.quantity().value());
+        assertEquals(200, modifiedArrivage2.quantity().value());
 
-        Stock stock2 =
-                this.stockRepository
-                        .stockForProductOfId(
-                                new ProductId(decrementProductStockCommand.productId()));
 
-        assertNotNull(stock2);
-        assertEquals(new Quantity(50), stock2.quantity());
+        
+       
 
-
-
-    }
-
-    @Test
-    public void testAugmentProductStock() {
-
-        AugmentProductStockCommand augmentProductStockCommand =
-                new AugmentProductStockCommand(
-                        "PRODUCT_ID_3",
-                        200);
-
-
-        this.productApplicationService
-                .augmentProductStock(
-                        augmentProductStockCommand);
-
-        Stock stock =
-                this.stockRepository
-                        .stockForProductOfId(
-                                new ProductId(augmentProductStockCommand.productId()));
-
-        assertNotNull(stock);
-        assertEquals(new Quantity(200), stock.quantity());
 
 
     }
+
+	public ProductApplicationService productApplicationService() {
+		return productApplicationService;
+	}
+
+	public ProductRepository productRepository() {
+		return productRepository;
+	}
+
+	public ArrivageRepository arrivageRepository() {
+		return arrivageRepository;
+	}
+
+	public StockRepository stockRepository() {
+		return stockRepository;
+	}
+
+
 }

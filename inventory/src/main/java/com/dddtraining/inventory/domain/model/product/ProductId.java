@@ -66,4 +66,14 @@ public final class ProductId {
                 "id='" + id + '\'' +
                 '}';
     }
+    //
+
+	public String getId() {
+		return id;
+	}
+    
+    
+        
+    
+    
 }

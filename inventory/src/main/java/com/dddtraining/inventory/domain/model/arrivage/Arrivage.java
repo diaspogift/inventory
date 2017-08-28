@@ -68,6 +68,8 @@ public class Arrivage {
         this.setUnitPrice(aUnitPrice);
     }
 
+    
+    //TO test
     public void changeQuantity(int aValue) {
         if (aValue <= 0) {
             throw new IllegalArgumentException("Invalid negative quantity");
@@ -75,6 +77,9 @@ public class Arrivage {
 
         this.setQuantity(new Quantity(aValue));
         
+		
+		if(this.quantity().value() == 0 )
+			this.setRunOut(true);
         
         DomainEventPublisher.instance()
         .publish(
@@ -83,6 +88,20 @@ public class Arrivage {
         				this.stockId(),
         				this.quantity()));
     }
+    
+    
+    //TO test
+	public void udpdateArrivageQuantity(int quantity2) {
+		if(quantity2 < 0)
+			throw new IllegalArgumentException("Invalid quantity!");
+		
+		this.setQuantity(new Quantity(quantity2));
+		
+		if(this.quantity().value() == 0 )
+			this.setRunOut(true);
+		
+	}
+
 
     /*** Getters and Setters ***/
     private void setArrivageId(ArrivageId anArrivageId) {
@@ -187,6 +206,8 @@ public class Arrivage {
         if (this.stockId() == null)
             this.stockId = stockId;
     }
+
+
 
 
 }

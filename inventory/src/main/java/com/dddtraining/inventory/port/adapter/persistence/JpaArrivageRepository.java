@@ -36,6 +36,9 @@ public class JpaArrivageRepository implements ArrivageRepository {
     }
 
     public Arrivage arrivgeOfId(ArrivageId anArrivageId) {
+    	
+    	
+    	
 
         Arrivage arrivage = 
         		this.entityManager()

@@ -4,13 +4,15 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dddtraining.inventory.application.command.AssignedStockCommand;
-import com.dddtraining.inventory.application.command.AugmentProductStockCommand;
 import com.dddtraining.inventory.application.command.CreateProductStockCommand;
 import com.dddtraining.inventory.application.command.DecrementProductStockCommand;
 import com.dddtraining.inventory.application.command.RegisterProductArrivageCommand;
@@ -36,6 +38,8 @@ import com.dddtraining.inventory.domain.model.stock.StockProductArrivage;
 import com.dddtraining.inventory.domain.model.stock.StockQuantityChanged;
 import com.dddtraining.inventory.domain.model.stock.StockRepository;
 import com.dddtraining.inventory.domain.model.stock.StockThresholdReached;
+import com.dddtraining.inventory.port.adapter.messaging.ativemq.JsonStockProductArrivageRep;
+
 
 @Service
 public class ProductApplicationService {
@@ -293,14 +297,23 @@ public class ProductApplicationService {
                     	message.put("stockId", aDomainEvent.stockId().id());
                     	message.put("productId", aDomainEvent.productId().id());
                     	message.put("quantity", String.valueOf(aDomainEvent.quantity()));
+                    	JSONArray jsonArray = new JSONArray();
                     	
                     	for(StockProductArrivage next : aDomainEvent.allModifiedArrivages()){
-                    
-                        	message.put(next.arrivageId().id(), next.toString());
+
+
+                    		JSONObject jsonObject = new JSONObject();
+                            try {
+                                jsonObject.put("changedArrivage", new JsonStockProductArrivageRep(next));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            jsonArray.put(jsonObject);
+                        	//message.put(next.arrivageId().id(), next.toString());
 
                     	}
                     	
-                    	
+                    	message.put("commande", jsonArray.toString());
                     	message.put("eventVersion", String.valueOf(aDomainEvent.eventVersion()));
                     	message.put("occurredOn", String.valueOf(aDomainEvent.occurredOn()));
 
@@ -327,20 +340,6 @@ public class ProductApplicationService {
         if (stock != null)
 
             stock.clearStockOf(aCommand.quantity());
-
-    }
-
-    @Transactional
-    public void augmentProductStock(AugmentProductStockCommand aCommand) {
-
-        Stock stock =
-                this.stockRepository()
-                        .stockForProductOfId((
-                                new ProductId(aCommand.productId())));
-
-        if (stock != null)
-
-            stock.augmentStockOf(aCommand.quantity());
 
     }
 

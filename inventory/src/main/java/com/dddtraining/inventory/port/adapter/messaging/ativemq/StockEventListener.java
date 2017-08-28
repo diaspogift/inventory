@@ -1,18 +1,26 @@
 package com.dddtraining.inventory.port.adapter.messaging.ativemq;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
+import org.springframework.stereotype.Component;
 
 import com.dddtraining.inventory.InventoryApplication;
+import com.dddtraining.inventory.application.arrivage.ArrivageApplicationService;
 import com.dddtraining.inventory.application.command.AssignedStockCommand;
 import com.dddtraining.inventory.application.product.ProductApplicationService;
 import com.dddtraining.inventory.domain.model.stock.StockRepository;
 
-//@Component
+@Component
 public class StockEventListener {
 
 	
@@ -21,6 +29,10 @@ public class StockEventListener {
     
     @Autowired
     private ProductApplicationService productApplicationService;
+    
+    @Autowired
+    private ArrivageApplicationService arrivageApplicationService;
+    
     @Autowired
     private StockRepository stockRepository;
 
@@ -29,19 +41,11 @@ public class StockEventListener {
     public void handleStockCreatedEvent(Map<String, String> mesage) {
 
 
-        System.out.println("In StockCreatedListener handleEvent \n\n" + mesage);
-
         String productId = mesage.get("productId");
         String stockId = mesage.get("stockId");
         String eventVersion = mesage.get("eventVersion");
         String occurredOn = mesage.get("occurredOn");
 
-
-        System.out.println("\nRecieved message for Stock Created Event");
-        System.out.println("productId = " + productId);
-        System.out.println("stockId = " + stockId);
-        System.out.println("eventVersion = " + eventVersion);
-        System.out.println("occurredOn = " + occurredOn);
 
 
         this.productApplicationService()
@@ -77,9 +81,35 @@ public class StockEventListener {
     @JmsListener(destination = "STOCK_QUANTITY_CHANGED_QUEUE")
     public void handleStockQuantityEvent(Map<String, String> mesage) {
 
+    	
+    	
+    	List<JsonStockProductArrivageRep> jsonStockProductArrivageReps = new ArrayList<JsonStockProductArrivageRep>();
+    	try {
+			JSONArray jsonArray = new JSONArray(mesage.get("commande"));
+			for(int i = 0; i< jsonArray.length(); i++){
+				
+				String object =  jsonArray.getString(i);
 
-    	logger.debug("\n"+mesage.toString());
-    	System.out.println(" \n In STOCK_QUANTITY_CHANGED_QUEUE message ===== "+mesage.toString());
+
+
+		    	JSONObject jsonObject = new JSONObject(object);
+
+
+		    	JSONObject object2 = (JSONObject) jsonObject.get("changedArrivage");
+		    	
+		    	
+				jsonStockProductArrivageReps.add(new JsonStockProductArrivageRep(object2.getString("arrivageId"), object2.getString("productId"),
+						object2.getString("lifeSpanTimeStartDate"), object2.getString("lifeSpanTimeEndDate"), 
+						object2.getInt("ordering"), object2.getInt("quantity")));
+			}
+			
+			
+			this.arrivageApplicationService.bulkUpdate(jsonStockProductArrivageReps);
+			
+			
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
     
     	//TO DOOOO
 

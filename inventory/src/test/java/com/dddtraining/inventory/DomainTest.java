@@ -26,9 +26,6 @@ public class DomainTest extends EventTrackingTest {
     public void setUp() throws Exception {
 
     	super.setUp();
-/*        this.productRepository = new JpaProductRepository();
-        this.arrivageRepository = new JpaArrivageRepository();
-        this.stockRepository = new JpaStockRepository();*/
     }
 
     public void tearDown() throws Exception {

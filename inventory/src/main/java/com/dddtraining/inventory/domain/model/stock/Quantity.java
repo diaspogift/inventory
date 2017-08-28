@@ -91,4 +91,12 @@ public class Quantity {
                 "value=" + value +
                 '}';
     }
+
+
+	public int getValue() {
+		return value;
+	}
+    
+    //
+    
 }

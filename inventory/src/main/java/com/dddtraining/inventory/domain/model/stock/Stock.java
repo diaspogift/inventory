@@ -4,6 +4,7 @@ import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -40,7 +41,7 @@ public class Stock {
     private int threshold;
     private ZonedDateTime dateStockThresholdReached;
     private boolean availability;
-    @OneToMany
+    @OneToMany(cascade=CascadeType.PERSIST)
     private Set<StockProductArrivage> stockProductArrivages;
     private boolean isThesholdReached;
 
@@ -112,10 +113,6 @@ public class Stock {
     }
 
     /*** Business logic ***/
-    public void augmentStockOf(int aValue) {
-
-        this.setQuantity(this.quantity().increment(aValue));
-    }
 
     public void clearStockOf(int aQuantityToClear) {
 
@@ -224,11 +221,6 @@ public class Stock {
     
     private void addNewStockProductArrivage(StockProductArrivage aStockProductArrivage) {
 
-    	
-    	System.out.print("\n\n aStockProductArrivage in addNewStockProductArrivage "+aStockProductArrivage);
-    	System.out.print("\n\n aStockProductArrivage in addNewStockProductArrivage "+aStockProductArrivage);
-    	System.out.print("\n\n aStockProductArrivage in addNewStockProductArrivage "+aStockProductArrivage);
-
         if (aStockProductArrivage == null) {
             throw new IllegalArgumentException("Invalid arrivage");
         }
@@ -292,9 +284,7 @@ public class Stock {
     //TO Refactor
     public void updateProductArrivage(StockProductArrivage aStockProductArrivage) {
     	
-    	
-    	System.out.print("\n\naStockProductArrivage in updateProductArrivage "+aStockProductArrivage);
-  
+    	  
     	
     	StockProductArrivage aNewStockProductArrivage = null;
     	StockProductArrivage anOldStockProductArrivage = null;
@@ -306,9 +296,7 @@ public class Stock {
     			anOldStockProductArrivage = next;
     			
     			aNewStockProductArrivage = next.createFrom(aStockProductArrivage);
-    			
-    	    	System.out.print("\n\naNewStockProductArrivage in updateProductArrivage in if  "+aNewStockProductArrivage);
-
+    		
 
     			this.setQuantity(this.quantity().decrement(next.quantity().value()));
     			
@@ -317,13 +305,11 @@ public class Stock {
     		}
     	}
     	
-    	System.out.print("\n\naNewStockProductArrivage in updateProductArrivage after for loop  "+aNewStockProductArrivage);
 
     	
 		this.stockProductArrivages().remove(anOldStockProductArrivage);
 		this.addNewStockProductArrivage(aNewStockProductArrivage);
 
-    	System.out.print("\n\naNewStockProductArrivage in updateProductArrivage after for loop  "+aNewStockProductArrivage);
 
     	
 	}

@@ -6,12 +6,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
+import org.springframework.stereotype.Component;
 
 import com.dddtraining.inventory.InventoryApplication;
 import com.dddtraining.inventory.application.stock.StockApplicationService;
 import com.dddtraining.inventory.domain.model.stock.StockRepository;
 
-//@Component
+@Component
 public class ProductEventListener {
 	
     private static final Logger logger = LoggerFactory
@@ -37,15 +38,6 @@ public class ProductEventListener {
         String status = mesage.get("status");
         String enventVersion = mesage.get("enventVersion");
         String occurredOn = mesage.get("occurredOn");
-
-
-        System.out.println("Recieved message for ProductCreated Event\n");
-        System.out.println("productId = " + productId);
-        System.out.println("name = " + name);
-        System.out.println("description = " + description);
-        System.out.println("status = " + status);
-        System.out.println("enventVersion = " + enventVersion);
-        System.out.println("occurredOn = " + occurredOn);
 
 
     }
