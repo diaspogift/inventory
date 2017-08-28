@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -29,6 +31,7 @@ public class Product {
     private StockId stockId;
     private String name;
     private String description;
+    @Enumerated(EnumType.STRING)
     private AvailabilityStatus status;
 
 
@@ -84,12 +87,21 @@ public class Product {
 
     }
 
-    public Product(ProductId productId2, String string, String string2, AvailabilityStatus stockCleared) {
+    public Product(ProductId productId2, String string, String string2, AvailabilityStatus availabilityStatus) {
         this();
         this.setProductId(productId2);
         this.setName(string);
         this.setDescription(string2);
-        this.setStatus(stockCleared);	
+        this.setStatus(availabilityStatus);	
+        
+        DomainEventPublisher
+        .instance()
+        .publish(new ProductCreated(
+                this.productId(),
+                this.name(),
+                this.description(),
+                this.status()
+        ));
      }
 
 	public void changeAvailabilityStatus(AvailabilityStatus aStatus) {

@@ -3,7 +3,6 @@ package com.dddtraining.inventory.port.adpter.persistence;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -11,42 +10,55 @@ import java.util.Collection;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.dddtraining.inventory.domain.model.arrivage.Arrivage;
 import com.dddtraining.inventory.domain.model.arrivage.ArrivageId;
 import com.dddtraining.inventory.domain.model.arrivage.ArrivageRepository;
 import com.dddtraining.inventory.domain.model.product.ProductId;
+import com.dddtraining.inventory.domain.model.product.ProductRepository;
 import com.dddtraining.inventory.domain.model.stock.Quantity;
 import com.dddtraining.inventory.domain.model.stock.StockId;
-import com.dddtraining.inventory.port.adapter.persistence.MockArrivageRepository;
+import com.dddtraining.inventory.domain.model.stock.StockRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@Transactional
 public class ArrivageRepositoryTest {
+	
+	@Autowired
+	private ArrivageRepository arrivageRepository;
+	@Autowired
+	private ProductRepository productRepository;
+	@Autowired
+	private StockRepository stockRepository;
 
     @Test
     public void testAddArrivage() {
+    	
+    	
+    	ProductId productId = this.productRepository.nextIdentity();
+    	ArrivageId arrivageId = this.arrivageRepository.nextIdentity();
+    	StockId stockId = this.stockRepository.nextIdentity();
 
-        ArrivageRepository arrivageRepository = new MockArrivageRepository();
-
-        assertEquals(5, arrivageRepository.allArrivages().size());
 
         Arrivage arrivage =
                 new Arrivage(
-                        new ProductId("PR12345"),
-                        new StockId("STOCK_ID_2"),
-                        new ArrivageId("ARR12350"),
+                		productId,
+                		stockId,
+                		arrivageId,
                         new Quantity(477),
                         new BigDecimal(540),
-                        "Arrivage de la periode des fetes de fin d'annee");
+                        "ARRIVAGE DESCRIPTION");
 
-        arrivageRepository.add(arrivage);
+        this.arrivageRepository.add(arrivage);
 
-        assertEquals(6, arrivageRepository.allArrivages().size());
+        assertEquals(1, arrivageRepository.allArrivages().size());
 
-        Arrivage foundArrivage = arrivageRepository.arrivgeOfId(new ArrivageId("ARR12350"));
+        Arrivage foundArrivage = arrivageRepository.arrivgeOfId(arrivage.arrivageId());
 
         assertEquals(arrivage, foundArrivage);
 
@@ -56,97 +68,287 @@ public class ArrivageRepositoryTest {
     public void testRemoveArrivage() {
 
 
-        ArrivageRepository arrivageRepository = new MockArrivageRepository();
+    	ProductId productId = this.productRepository.nextIdentity();
+    	ArrivageId arrivageId = this.arrivageRepository.nextIdentity();
+    	StockId stockId = this.stockRepository.nextIdentity();
 
-        assertEquals(5, arrivageRepository.allArrivages().size());
 
         Arrivage arrivage =
                 new Arrivage(
-                        new ProductId("PR12345"),
-                        new StockId("STOCK_ID_2"),
-                        new ArrivageId("ARR12345"),
-                        new Quantity(1000),
-                        new BigDecimal(500),
-                        "Arrivage de la periode des fetes");
+                		productId,
+                		stockId,
+                		arrivageId,
+                        new Quantity(477),
+                        new BigDecimal(540),
+                        "ARRIVAGE DESCRIPTION");
 
+        this.arrivageRepository.add(arrivage);
 
-        arrivageRepository.remove(arrivage);
+        assertEquals(1, arrivageRepository.allArrivages().size());
 
-        assertEquals(4, arrivageRepository.allArrivages().size());
+        this.arrivageRepository.remove(arrivage);
 
-        Arrivage foundArrivage = arrivageRepository.arrivgeOfId(arrivage.arrivageId());
-
-        assertNull(foundArrivage);
-
+        assertEquals(0, arrivageRepository.allArrivages().size());
 
     }
 
     @Test
     public void testArrivageOfId() {
 
-        ArrivageRepository arrivageRepository = new MockArrivageRepository();
+    	ProductId productId = this.productRepository.nextIdentity();
+    	ArrivageId arrivageId = this.arrivageRepository.nextIdentity();
+    	StockId stockId = this.stockRepository.nextIdentity();
+
 
         Arrivage arrivage =
                 new Arrivage(
-                        new ProductId("PR12345"),
-                        new StockId("STOCK_ID_2"),
-                        new ArrivageId("ARR12350"),
-                        new Quantity(1000),
-                        new BigDecimal(500),
-                        "Arrivage de la periode des fetes");
+                		productId,
+                		stockId,
+                		arrivageId,
+                        new Quantity(477),
+                        new BigDecimal(540),
+                        "ARRIVAGE DESCRIPTION");
 
-        arrivageRepository.add(arrivage);
+        this.arrivageRepository.add(arrivage);
 
-        Arrivage foundArrivage = arrivageRepository.arrivgeOfId(new ArrivageId("ARR12350"));
+        assertEquals(1, arrivageRepository.allArrivages().size());
 
-        assertNotNull(foundArrivage);
+        Arrivage foundArrivage = arrivageRepository.arrivgeOfId(arrivage.arrivageId());
 
         assertEquals(arrivage, foundArrivage);
-
     }
 
     @Test
     public void testAllArrivagesPriorTo() {
+    	
+    	
+    	ProductId productId = this.productRepository.nextIdentity();
+    	ArrivageId arrivageId1 = this.arrivageRepository.nextIdentity();
+    	ArrivageId arrivageId2 = this.arrivageRepository.nextIdentity();
+    	ArrivageId arrivageId3 = this.arrivageRepository.nextIdentity();
+    	StockId stockId = this.stockRepository.nextIdentity();
+    	
+        Arrivage arrivage1 =
+                new Arrivage(
+                		productId,
+                		stockId,
+                		arrivageId1,
+                        new Quantity(477),
+                        new BigDecimal(540),
+                        "ARRIVAGE DESCRIPTION");
+        
+        
+        try {
+			Thread.sleep(2000l);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+        
+        Arrivage arrivage2 =
+                new Arrivage(
+                		productId,
+                		stockId,
+                		arrivageId2,
+                        new Quantity(477),
+                        new BigDecimal(540),
+                        "ARRIVAGE DESCRIPTION");
+        try {
+			Thread.sleep(2000l);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 
-        ArrivageRepository arrivageRepository = new MockArrivageRepository();
+        
+        Arrivage arrivage3 =
+                new Arrivage(
+                		productId,
+                		stockId,
+                		arrivageId3,
+                        new Quantity(477),
+                        new BigDecimal(540),
+                        "ARRIVAGE DESCRIPTION");
 
-        Collection<Arrivage> allArrivagesPriorToNow = arrivageRepository.allArrivagesPriorTo(ZonedDateTime.now().plusDays(1l));
+        this.arrivageRepository.add(arrivage1);
+        this.arrivageRepository.add(arrivage2);
+        this.arrivageRepository.add(arrivage3);
 
-        assertEquals(5, allArrivagesPriorToNow.size());
+
+     
+        Collection<Arrivage> allArrivagesPriorToArrivage2Creation = 
+        		arrivageRepository
+        		.allArrivagesPriorTo(arrivage2.lifeSpanTime().startDate().minusNanos(1));
+
+        assertEquals(1, allArrivagesPriorToArrivage2Creation.size());
     }
 
     @Test
     public void testAllArrivagesAfter() {
 
 
-        ArrivageRepository arrivageRepository = new MockArrivageRepository();
 
-        Collection<Arrivage> allArrivagesPriorToNow = arrivageRepository.allArrivagesAfter(ZonedDateTime.now().minusDays(1l));
+    	ProductId productId = this.productRepository.nextIdentity();
+    	ArrivageId arrivageId1 = this.arrivageRepository.nextIdentity();
+    	ArrivageId arrivageId2 = this.arrivageRepository.nextIdentity();
+    	ArrivageId arrivageId3 = this.arrivageRepository.nextIdentity();
+    	StockId stockId = this.stockRepository.nextIdentity();
+    	
+        Arrivage arrivage1 =
+                new Arrivage(
+                		productId,
+                		stockId,
+                		arrivageId1,
+                        new Quantity(477),
+                        new BigDecimal(540),
+                        "ARRIVAGE DESCRIPTION");
+        
+        
+        try {
+			Thread.sleep(2000l);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+        
+        Arrivage arrivage2 =
+                new Arrivage(
+                		productId,
+                		stockId,
+                		arrivageId2,
+                        new Quantity(477),
+                        new BigDecimal(540),
+                        "ARRIVAGE DESCRIPTION");
+        try {
+			Thread.sleep(2000l);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 
-        assertEquals(5, allArrivagesPriorToNow.size());
+        
+        Arrivage arrivage3 =
+                new Arrivage(
+                		productId,
+                		stockId,
+                		arrivageId3,
+                        new Quantity(477),
+                        new BigDecimal(540),
+                        "ARRIVAGE DESCRIPTION");
+
+        this.arrivageRepository.add(arrivage1);
+        this.arrivageRepository.add(arrivage2);
+        this.arrivageRepository.add(arrivage3);
+
+
+     
+        Collection<Arrivage> allArrivagesAfterArrivage2Creation = 
+        		arrivageRepository
+        		.allArrivagesAfter(arrivage2.lifeSpanTime().startDate().plusNanos(1));
+
+        assertEquals(1, allArrivagesAfterArrivage2Creation.size());
     }
 
     @Test
     public void testAllArrivagesBetweenDates() {
+    	
+    	
+    	ProductId productId = this.productRepository.nextIdentity();
+    	ArrivageId arrivageId1 = this.arrivageRepository.nextIdentity();
+    	ArrivageId arrivageId2 = this.arrivageRepository.nextIdentity();
+    	ArrivageId arrivageId3 = this.arrivageRepository.nextIdentity();
+    	StockId stockId = this.stockRepository.nextIdentity();
+    	
+        Arrivage arrivage1 =
+                new Arrivage(
+                		productId,
+                		stockId,
+                		arrivageId1,
+                        new Quantity(477),
+                        new BigDecimal(540),
+                        "ARRIVAGE DESCRIPTION");
+        
+        
+
+        
+        Arrivage arrivage2 =
+                new Arrivage(
+                		productId,
+                		stockId,
+                		arrivageId2,
+                        new Quantity(477),
+                        new BigDecimal(540),
+                        "ARRIVAGE DESCRIPTION");
+   
+
+        
+        Arrivage arrivage3 =
+                new Arrivage(
+                		productId,
+                		stockId,
+                		arrivageId3,
+                        new Quantity(477),
+                        new BigDecimal(540),
+                        "ARRIVAGE DESCRIPTION");
+
+        this.arrivageRepository.add(arrivage1);
+        this.arrivageRepository.add(arrivage2);
+        this.arrivageRepository.add(arrivage3);
 
 
-        ArrivageRepository arrivageRepository = new MockArrivageRepository();
 
-        Collection<Arrivage> allArrivagesPriorToNow = arrivageRepository.allArrivagesBetweenDates(ZonedDateTime.now().minusDays(1l), ZonedDateTime.now().plusDays(1l));
 
-        assertEquals(5, allArrivagesPriorToNow.size());
+        Collection<Arrivage> allArrivagesBetweenYesterdayAndNow = arrivageRepository.allArrivagesBetweenDates(ZonedDateTime.now().minusDays(1l), ZonedDateTime.now());
+
+        assertEquals(3, allArrivagesBetweenYesterdayAndNow.size());
     }
 
 
     @Test
     public void testAllArrivageOfProductId() {
 
-        ArrivageRepository arrivageRepository = new MockArrivageRepository();
 
-        assertEquals(5, arrivageRepository.allArrivages().size());
+    	ProductId productId1 = this.productRepository.nextIdentity();
+    	ProductId productId2 = this.productRepository.nextIdentity();
+    	ArrivageId arrivageId1 = this.arrivageRepository.nextIdentity();
+    	ArrivageId arrivageId2 = this.arrivageRepository.nextIdentity();
+    	ArrivageId arrivageId3 = this.arrivageRepository.nextIdentity();
+    	StockId stockId = this.stockRepository.nextIdentity();
+    	
+        Arrivage arrivage1 =
+                new Arrivage(
+                		productId1,
+                		stockId,
+                		arrivageId1,
+                        new Quantity(477),
+                        new BigDecimal(540),
+                        "ARRIVAGE DESCRIPTION");
+        
+        
+
+        
+        Arrivage arrivage2 =
+                new Arrivage(
+                		productId2,
+                		stockId,
+                		arrivageId2,
+                        new Quantity(477),
+                        new BigDecimal(540),
+                        "ARRIVAGE DESCRIPTION");
+   
+
+        
+        Arrivage arrivage3 =
+                new Arrivage(
+                		productId2,
+                		stockId,
+                		arrivageId3,
+                        new Quantity(477),
+                        new BigDecimal(540),
+                        "ARRIVAGE DESCRIPTION");
+
+        this.arrivageRepository.add(arrivage1);
+        this.arrivageRepository.add(arrivage2);
+        this.arrivageRepository.add(arrivage3);
 
 
-        Collection<Arrivage> arrivages = arrivageRepository.allArrivagesOfProductId(new ProductId("PR12345"));
+        Collection<Arrivage> arrivages = arrivageRepository.allArrivagesOfProductId(productId2);
 
 
         assertNotNull(arrivages);
@@ -157,13 +359,51 @@ public class ArrivageRepositoryTest {
     @Test
     public void testAllArrivages() {
 
-        ArrivageRepository arrivageRepository = new MockArrivageRepository();
+    	ProductId productId = this.productRepository.nextIdentity();
+    	ArrivageId arrivageId1 = this.arrivageRepository.nextIdentity();
+    	ArrivageId arrivageId2 = this.arrivageRepository.nextIdentity();
+    	ArrivageId arrivageId3 = this.arrivageRepository.nextIdentity();
+    	StockId stockId = this.stockRepository.nextIdentity();
+    	
+        Arrivage arrivage1 =
+                new Arrivage(
+                		productId,
+                		stockId,
+                		arrivageId1,
+                        new Quantity(477),
+                        new BigDecimal(540),
+                        "ARRIVAGE DESCRIPTION");
+        
+        
 
-        assertEquals(5, arrivageRepository.allArrivages().size());
+        
+        Arrivage arrivage2 =
+                new Arrivage(
+                		productId,
+                		stockId,
+                		arrivageId2,
+                        new Quantity(477),
+                        new BigDecimal(540),
+                        "ARRIVAGE DESCRIPTION");
+   
 
+        
+        Arrivage arrivage3 =
+                new Arrivage(
+                		productId,
+                		stockId,
+                		arrivageId3,
+                        new Quantity(477),
+                        new BigDecimal(540),
+                        "ARRIVAGE DESCRIPTION");
+
+        this.arrivageRepository.add(arrivage1);
+        this.arrivageRepository.add(arrivage2);
+        this.arrivageRepository.add(arrivage3);
+        
         Collection<Arrivage> arrivages = arrivageRepository.allArrivages();
 
-        assertEquals(5, arrivages.size());
+        assertEquals(3, arrivages.size());
 
 
     }

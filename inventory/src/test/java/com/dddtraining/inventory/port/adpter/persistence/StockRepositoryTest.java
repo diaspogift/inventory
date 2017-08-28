@@ -6,105 +6,135 @@ import java.util.Collection;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.dddtraining.inventory.domain.model.arrivage.ArrivageRepository;
 import com.dddtraining.inventory.domain.model.product.ProductId;
+import com.dddtraining.inventory.domain.model.product.ProductRepository;
 import com.dddtraining.inventory.domain.model.stock.Stock;
 import com.dddtraining.inventory.domain.model.stock.StockId;
 import com.dddtraining.inventory.domain.model.stock.StockRepository;
-import com.dddtraining.inventory.port.adapter.persistence.MockStockRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@Transactional
 public class StockRepositoryTest {
+	
+	@Autowired
+	private ArrivageRepository arrivageRepository;
+	@Autowired
+	private ProductRepository productRepository;
+	@Autowired
+	private StockRepository stockRepository;
+	
+	
 
     @Test
     public void testAddStock() {
 
-        StockRepository stockRepository = new MockStockRepository();
+    	
+    	ProductId productId = this.productRepository.nextIdentity();
+    	StockId stockId = this.stockRepository.nextIdentity();
 
-        assertEquals(4, stockRepository.allStocks().size());
+        Stock stock = new Stock(stockId, productId);
 
-        Stock stk5Prod3 =
-                new Stock(
-                        new StockId("STOCK_ID_5"),
-                        new ProductId("PRODUCT_ID_3"));
+        this.stockRepository.add(stock);
 
-        stockRepository.add(stk5Prod3);
+        assertEquals(1, this.stockRepository.allStocks().size());
 
-        assertEquals(5, stockRepository.allStocks().size());
+        Stock savedStock = this.stockRepository.stockOfId(stockId);
 
-        Stock savedStock = stockRepository.stockOfId(new StockId("STOCK_ID_5"));
-
-        assertEquals(stk5Prod3, savedStock);
+        assertEquals(stock, savedStock);
 
     }
 
     @Test
     public void testRemoveStock() {
 
-        StockRepository stockRepository = new MockStockRepository();
+    	ProductId productId = this.productRepository.nextIdentity();
+    	StockId stockId = this.stockRepository.nextIdentity();
 
-        assertEquals(4, stockRepository.allStocks().size());
 
-        Stock stk1Prod1 = stockRepository.stockOfId(new StockId("STOCK_ID_1"));
+        Stock stock = new Stock(stockId, productId);
 
-        stockRepository.remove(stk1Prod1);
+        this.stockRepository.add(stock);
 
-        assertEquals(3, stockRepository.allStocks().size());
+        assertEquals(1, this.stockRepository.allStocks().size());
+
+
+        stockRepository.remove(stock);
+
+        assertEquals(0, this.stockRepository.allStocks().size());
 
     }
 
     @Test
     public void testStockOfId() {
 
-        Stock ExpectedStk1Prod1 =
-                new Stock(
-                        new StockId("STOCK_ID_1"),
-                        new ProductId("PRODUCT_ID_1"));
+    	ProductId productId = this.productRepository.nextIdentity();
+    	StockId stockId = this.stockRepository.nextIdentity();
 
-        StockRepository stockRepository = new MockStockRepository();
+        Stock stock = new Stock(stockId, productId);
 
-        Stock ActualStk1Prod1 = stockRepository.stockOfId(new StockId("STOCK_ID_1"));
+        this.stockRepository.add(stock);
 
-        assertEquals(ExpectedStk1Prod1, ActualStk1Prod1);
+        assertEquals(1, stockRepository.allStocks().size());
 
-    }
+        Stock foundStock = stockRepository.stockOfId(stockId);
 
-    @Test
-    public void testAllStockForProductOfId() {
-
-        StockRepository stockRepository = new MockStockRepository();
-
-        Stock product1Stocks = stockRepository.stockForProductOfId(new ProductId("PRODUCT_ID_1"));
-        Stock product2Stocks = stockRepository.stockForProductOfId(new ProductId("PRODUCT_ID_2"));
-        Stock product3Stocks = stockRepository.stockForProductOfId(new ProductId("PRODUCT_ID_3"));
-
-        assertEquals(new ProductId("PRODUCT_ID_1"), product1Stocks.productId());
-        assertEquals(new ProductId("PRODUCT_ID_2"), product2Stocks.productId());
-        assertEquals(new ProductId("PRODUCT_ID_3"), product3Stocks.productId());
-
+        assertEquals(stock, foundStock);
 
     }
 
+   
     @Test
     public void testAllActiveStocks() {
 
-        StockRepository stockRepository = new MockStockRepository();
+    	ProductId productId = this.productRepository.nextIdentity();
+    	StockId stockId = this.stockRepository.nextIdentity();
 
-        Collection<Stock> acitiveStocks = stockRepository.allAvailableStock();
-        assertEquals(4, acitiveStocks.size());
+        Stock stock1 = new Stock(stockId, productId);
+        Stock stock2 = new Stock(stockId, productId);
+        Stock stock3 = new Stock(stockId, productId);
+
+        this.stockRepository.add(stock1);
+        this.stockRepository.add(stock2);
+        this.stockRepository.add(stock3);
+        
+        
+        
+
+        Collection<Stock> acitiveStocks = this.stockRepository.allAvailableStock();
+        assertEquals(0, acitiveStocks.size());
 
     }
 
     @Test
     public void testAllStocks() {
 
-        StockRepository stockRepository = new MockStockRepository();
 
-        Collection<Stock> allStocks = stockRepository.allStocks();
-        assertEquals(4, allStocks.size());
+    	ProductId productId = this.productRepository.nextIdentity();
+    	StockId stockId = this.stockRepository.nextIdentity();
+
+        Stock stock1 = new Stock(stockId, productId);
+        Stock stock2 = new Stock(stockId, productId);
+        Stock stock3 = new Stock(stockId, productId);
+
+        this.stockRepository.add(stock1);
+        this.stockRepository.add(stock2);
+        this.stockRepository.add(stock3);
+        
+        Collection<Stock> acitiveStocks = this.stockRepository.allStocks();
+        assertEquals(3, acitiveStocks.size());
+        
+        try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 
     }
 

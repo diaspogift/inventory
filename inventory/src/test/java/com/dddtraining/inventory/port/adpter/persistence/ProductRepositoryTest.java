@@ -6,40 +6,43 @@ import java.util.Collection;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.dddtraining.inventory.domain.model.product.AvailabilityStatus;
 import com.dddtraining.inventory.domain.model.product.Product;
 import com.dddtraining.inventory.domain.model.product.ProductId;
 import com.dddtraining.inventory.domain.model.product.ProductRepository;
-import com.dddtraining.inventory.port.adapter.persistence.MockProductRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@Transactional
 public class ProductRepositoryTest {
+
+	@Autowired
+    private ProductRepository productRepository;
 
     @Test
     public void testAddProduct() {
 
-        ProductRepository productRepository = new MockProductRepository();
 
-        assertEquals(3, productRepository.allProducts().size());
+    	ProductId productId = this.productRepository.nextIdentity();
 
-
-        Product prod4 =
+        Product product =
                 new Product(
-                        new ProductId("PRODUCT_ID_4"),
-                        "Ciment de CimentCam",
-                        "Le meilleur sur le marche: apres Dangote Ciment!");
+                		productId,
+                        "PRODUCT NAME",
+                        "PRODUCT DESCRIPTION");
 
-        productRepository.add(prod4);
+        productRepository.add(product);
 
-        assertEquals(4, productRepository.allProducts().size());
+        assertEquals(1, productRepository.allProducts().size());
 
-        Product savedProduct = productRepository.productOfId(new ProductId("PRODUCT_ID_4"));
+        Product savedProduct = productRepository.productOfId(productId);
 
-        assertEquals(prod4, savedProduct);
+        assertEquals(product, savedProduct);
 
     }
 
@@ -47,15 +50,25 @@ public class ProductRepositoryTest {
     @Test
     public void testRemoveProduct() {
 
-        ProductRepository productRepository = new MockProductRepository();
+    	ProductId productId = this.productRepository.nextIdentity();
 
-        assertEquals(3, productRepository.allProducts().size());
 
-        Product prod1 = productRepository.productOfId(new ProductId("PRODUCT_ID_1"));
+    	  Product product =
+                  new Product(
+                  		productId,
+                          "PRODUCT NAME",
+                          "PRODUCT DESCRIPTION");
 
-        productRepository.remove(prod1);
+          productRepository.add(product);
 
-        assertEquals(2, productRepository.allProducts().size());
+
+        assertEquals(1, productRepository.allProducts().size());
+        
+        productRepository.remove(product);
+        
+        assertEquals(0, productRepository.allProducts().size());
+
+
 
     }
 
@@ -63,27 +76,47 @@ public class ProductRepositoryTest {
     @Test
     public void testProductOfId() {
 
-        Product ExpectedProd1 =
+    	ProductId productId = this.productRepository.nextIdentity();
+
+        Product product =
                 new Product(
-                        new ProductId("PRODUCT_ID_1"),
-                        "Petit martaux",
-                        "Tres solide");
+                		productId,
+                        "PRODUCT NAME",
+                        "PRODUCT DESCRIPTION");
 
-        ProductRepository productRepository = new MockProductRepository();
+        productRepository.add(product);
 
-        Product ActualProd1 = productRepository.productOfId(new ProductId("PRODUCT_ID_1"));
+        assertEquals(1, productRepository.allProducts().size());
 
-        assertEquals(ExpectedProd1, ActualProd1);
+        Product foundProduct = productRepository.productOfId(productId);
+
+        assertEquals(product.productId(), foundProduct.productId());
 
     }
 
     @Test
     public void TestAllProductOfStatus() {
+    	
+    	
+    	ProductId productId1 = this.productRepository.nextIdentity();
+        Product product1 = new Product(productId1,"PRODUCT NAME 1","PRODUCT DESCRIPTION 1");
+       
+        
+    	ProductId productId2 = this.productRepository.nextIdentity();
+        Product product2 = new Product(productId2,"PRODUCT NAME 2","PRODUCT DESCRIPTION 2");  
+        
+    	ProductId productId3 = this.productRepository.nextIdentity();
+        Product product3 = new Product(productId3,"PRODUCT NAME 3","PRODUCT DESCRIPTION 3", AvailabilityStatus.STOCK_PROVIDED);
+        
+        
 
-        ProductRepository productRepository = new MockProductRepository();
-
+        this.productRepository.add(product1);
+        this.productRepository.add(product2);
+        this.productRepository.add(product3);
+        
+        
         Collection<Product> productsWithCreatedStatus = productRepository.allProductOfStatus(AvailabilityStatus.CREATED);
-        assertEquals(3, productsWithCreatedStatus.size());
+        assertEquals(2, productsWithCreatedStatus.size());
 
         for (Product nextProduct : productsWithCreatedStatus) {
 
@@ -91,23 +124,38 @@ public class ProductRepositoryTest {
         }
 
         Collection<Product> productsWithStockProvidedStatus = productRepository.allProductOfStatus(AvailabilityStatus.STOCK_PROVIDED);
-        assertEquals(0, productsWithStockProvidedStatus.size());
+        assertEquals(1, productsWithStockProvidedStatus.size());
+        
+        for (Product nextProduct : productsWithStockProvidedStatus) {
 
-        Collection<Product> productsWithThresholdReachedStatus = productRepository.allProductOfStatus(AvailabilityStatus.THRESHOLD_REACHED);
-        assertEquals(0, productsWithThresholdReachedStatus.size());
+            assertEquals(AvailabilityStatus.STOCK_PROVIDED, nextProduct.status());
+        }
 
-        Collection<Product> productsWithStockClearedStatus = productRepository.allProductOfStatus(AvailabilityStatus.STOCK_CLEARED);
-        assertEquals(0, productsWithStockClearedStatus.size());
-
+     
 
     }
 
 
     @Test
     public void testAllProducts() {
+    	
+    	ProductId productId1 = this.productRepository.nextIdentity();
+        Product product1 = new Product(productId1,"PRODUCT NAME 1","PRODUCT DESCRIPTION 1");
+       
+        
+    	ProductId productId2 = this.productRepository.nextIdentity();
+        Product product2 = new Product(productId2,"PRODUCT NAME 2","PRODUCT DESCRIPTION 2");  
+        
+    	ProductId productId3 = this.productRepository.nextIdentity();
+        Product product3 = new Product(productId3,"PRODUCT NAME 3","PRODUCT DESCRIPTION 3", AvailabilityStatus.THRESHOLD_REACHED);
+        
+        
 
-        ProductRepository productRepository = new MockProductRepository();
-
+        this.productRepository.add(product1);
+        this.productRepository.add(product2);
+        this.productRepository.add(product3);
+        
+        
         Collection<Product> allProducts = productRepository.allProducts();
         assertEquals(3, allProducts.size());
 

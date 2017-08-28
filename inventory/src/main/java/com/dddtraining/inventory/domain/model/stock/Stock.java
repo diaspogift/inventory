@@ -52,7 +52,7 @@ public class Stock {
         this.setStockId(aStockId);
         this.setProductId(aProductId);
         this.setQuantity(new Quantity(0));
-        this.setAvailability(true);
+        this.setAvailability(false);
         this.setThesholdReached(false);
         this.setStockProductArrivages(new HashSet<StockProductArrivage>());
 
@@ -71,7 +71,7 @@ public class Stock {
         this.setStockId(aStockId);
         this.setProductId(aProductId);
         this.setQuantity(aQuantity);
-        this.setAvailability(true);
+        this.setAvailability(false);
         this.setStockProductArrivages(new HashSet<StockProductArrivage>());
 
 
@@ -131,10 +131,8 @@ public class Stock {
                         allModifiedArrivages)
         );
 
-        logger.debug("Here Are my modified Stock product arrivages");
 
 
-        allModifiedArrivages.forEach(s->logger.debug(s.toString()));
 
         if (this.isThresholdReached(actualQuantity, new Quantity(aQuantityToClear))) {
 
