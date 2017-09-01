@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,7 +17,10 @@ import com.dddtraining.inventory.InventoryApplication;
 import com.dddtraining.inventory.application.arrivage.ArrivageApplicationService;
 import com.dddtraining.inventory.application.command.AssignedStockCommand;
 import com.dddtraining.inventory.application.product.ProductApplicationService;
+import com.dddtraining.inventory.domain.model.stock.StockQuantityChanged;
 import com.dddtraining.inventory.domain.model.stock.StockRepository;
+
+import javax.persistence.NoResultException;
 
 @Component
 public class StockEventListener {
@@ -41,20 +43,27 @@ public class StockEventListener {
     public void handleStockCreatedEvent(Map<String, String> mesage) {
 
 
+
+
         String productId = mesage.get("productId");
         String stockId = mesage.get("stockId");
         String eventVersion = mesage.get("eventVersion");
         String occurredOn = mesage.get("occurredOn");
 
+        System.out.println("\n\n In Stock Created Queue message before = "+mesage);
 
 
-        this.productApplicationService()
+
+       this.productApplicationService()
                 .assignedStockToProduct(
                         new AssignedStockCommand(
                                 productId,
                                 stockId
                         )
                 );
+
+        System.out.println("\n\n In Stock Created Queue message after = "+mesage);
+
 
     }
     
@@ -79,37 +88,36 @@ public class StockEventListener {
     
     
     @JmsListener(destination = "STOCK_QUANTITY_CHANGED_QUEUE")
-    public void handleStockQuantityEvent(Map<String, String> mesage) {
+    public void handleStockQuantityEvent(Map<String , String> mesage) {
 
-    	
+
+
+        System.out.println("\n mesage in STOCK_QUANTITY_CHANGED_QUEUE = "+mesage);
+    	System.out.println("\n mesage in STOCK_QUANTITY_CHANGED_QUEUE = "+mesage);
     	
     	List<JsonStockProductArrivageRep> jsonStockProductArrivageReps = new ArrayList<JsonStockProductArrivageRep>();
     	try {
 			JSONArray jsonArray = new JSONArray(mesage.get("commande"));
 			for(int i = 0; i< jsonArray.length(); i++){
 				
-				String object =  jsonArray.getString(i);
+				JSONObject object =  jsonArray.getJSONObject(i);
 
-
-
-		    	JSONObject jsonObject = new JSONObject(object);
-
-
-		    	JSONObject object2 = (JSONObject) jsonObject.get("changedArrivage");
-		    	
+		    	JSONObject object2 = (JSONObject) object.get("changedArrivage");
 		    	
 				jsonStockProductArrivageReps.add(new JsonStockProductArrivageRep(object2.getString("arrivageId"), object2.getString("productId"),
 						object2.getString("lifeSpanTimeStartDate"), object2.getString("lifeSpanTimeEndDate"), 
 						object2.getInt("ordering"), object2.getInt("quantity")));
 			}
-			
-			
-			this.arrivageApplicationService.bulkUpdate(jsonStockProductArrivageReps);
-			
+
+
+
+
+            this.arrivageApplicationService.bulkUpdate(jsonStockProductArrivageReps);
 			
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
+			
     
     	//TO DOOOO
 

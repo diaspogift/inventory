@@ -1,10 +1,15 @@
 package com.dddtraining.inventory.domain.model.arrivage;
 
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 
-public class LifeSpanTime {
+public class LifeSpanTime implements Serializable{
 
-    private ZonedDateTime startDate;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private ZonedDateTime startDate;
     private ZonedDateTime endDate;
 
     public LifeSpanTime(ZonedDateTime startDate) {

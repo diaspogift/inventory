@@ -1,0 +1,1 @@
+package com.dddtraining.inventory.domain.model;

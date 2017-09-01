@@ -24,4 +24,14 @@ public class CreateProductStockCommand {
     public String productId() {
         return this.productId;
     }
+
+
+    @Override
+    public String toString() {
+        return "CreateProductStockCommand{" +
+                "stockId='" + stockId + '\'' +
+                ", productId='" + productId + '\'' +
+                ", treshold=" + treshold +
+                '}';
+    }
 }

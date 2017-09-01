@@ -86,6 +86,8 @@ public class ArrivageApplicationService {
 			                        .arrivgeOfId(new ArrivageId(aCommand.arrivageId()));
 
         arrivage.changeQuantity(aCommand.quantity());
+
+        //DomainEventPublisher.instance().unSubscribe(subscriber);
     }
 
 

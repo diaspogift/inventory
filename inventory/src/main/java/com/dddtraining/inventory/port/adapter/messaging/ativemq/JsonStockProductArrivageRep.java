@@ -84,4 +84,15 @@ public class JsonStockProductArrivageRep {
 		this.quantity = quantity;
 	}
 
+
+
+	@Override
+	public String toString() {
+		return "JsonStockProductArrivageRep [arrivageId=" + arrivageId + ", productId=" + productId
+				+ ", lifeSpanTimeStartDate=" + lifeSpanTimeStartDate + ", lifeSpanTimeEndDate=" + lifeSpanTimeEndDate
+				+ ", ordering=" + ordering + ", quantity=" + quantity + "]";
+	}
+
+	
+	
 }

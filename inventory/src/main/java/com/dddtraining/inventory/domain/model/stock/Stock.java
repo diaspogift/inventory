@@ -4,14 +4,9 @@ import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 
+import com.dddtraining.inventory.domain.model.common.ConcurrencySafeEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +18,7 @@ import com.dddtraining.inventory.domain.model.product.ProductId;
 
 
 @Entity
-public class Stock {
+public class Stock extends ConcurrencySafeEntity {
 
     private static final Logger logger = LoggerFactory
             .getLogger(InventoryApplication.class);
@@ -31,7 +26,7 @@ public class Stock {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private long id;
-    
+
     @Embedded
     private StockId stockId;
     @Embedded
@@ -41,7 +36,7 @@ public class Stock {
     private int threshold;
     private ZonedDateTime dateStockThresholdReached;
     private boolean availability;
-    @OneToMany(cascade=CascadeType.PERSIST)
+    @OneToMany(cascade=CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<StockProductArrivage> stockProductArrivages;
     private boolean isThesholdReached;
 
@@ -290,7 +285,10 @@ public class Stock {
     	for(StockProductArrivage next : this.stockProductArrivages()){
     		
     		if (next.arrivageId().equals(aStockProductArrivage.arrivageId())){
-    			
+
+                System.out.println("\nIn here aStockProductArrivage = "+aStockProductArrivage.toString());
+                System.out.println("\nIn here this = "+this.toString());
+
     			anOldStockProductArrivage = next;
     			
     			aNewStockProductArrivage = next.createFrom(aStockProductArrivage);
@@ -298,7 +296,7 @@ public class Stock {
 
     			this.setQuantity(this.quantity().decrement(next.quantity().value()));
     			
-    			
+
 
     		}
     	}

@@ -1,6 +1,7 @@
 package com.dddtraining.inventory.port.adpter.persistence;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.Collection;
 
@@ -8,7 +9,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dddtraining.inventory.domain.model.product.AvailabilityStatus;
@@ -16,9 +20,11 @@ import com.dddtraining.inventory.domain.model.product.Product;
 import com.dddtraining.inventory.domain.model.product.ProductId;
 import com.dddtraining.inventory.domain.model.product.ProductRepository;
 
+import javax.persistence.NoResultException;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@Transactional
+@Transactional(propagation = Propagation.REQUIRES_NEW)
 public class ProductRepositoryTest {
 
 	@Autowired
@@ -38,7 +44,6 @@ public class ProductRepositoryTest {
 
         productRepository.add(product);
 
-        assertEquals(1, productRepository.allProducts().size());
 
         Product savedProduct = productRepository.productOfId(productId);
 
@@ -47,7 +52,7 @@ public class ProductRepositoryTest {
     }
 
 
-    @Test
+    @Test(expected = EmptyResultDataAccessException.class)
     public void testRemoveProduct() {
 
     	ProductId productId = this.productRepository.nextIdentity();
@@ -59,15 +64,18 @@ public class ProductRepositoryTest {
                           "PRODUCT NAME",
                           "PRODUCT DESCRIPTION");
 
-          productRepository.add(product);
+        productRepository.add(product);
 
+        Product saveProduct = this.productRepository.productOfId(productId);
 
-        assertEquals(1, productRepository.allProducts().size());
-        
+        assertEquals(product, saveProduct);
+
         productRepository.remove(product);
-        
-        assertEquals(0, productRepository.allProducts().size());
 
+        saveProduct = this.productRepository.productOfId(productId);
+
+
+        assertNull(saveProduct);
 
 
     }
@@ -86,7 +94,6 @@ public class ProductRepositoryTest {
 
         productRepository.add(product);
 
-        assertEquals(1, productRepository.allProducts().size());
 
         Product foundProduct = productRepository.productOfId(productId);
 

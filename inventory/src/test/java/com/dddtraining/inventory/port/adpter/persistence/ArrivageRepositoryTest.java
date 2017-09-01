@@ -3,6 +3,7 @@ package com.dddtraining.inventory.port.adpter.persistence;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -12,7 +13,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dddtraining.inventory.domain.model.arrivage.Arrivage;
@@ -26,7 +31,8 @@ import com.dddtraining.inventory.domain.model.stock.StockRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@Transactional
+@Transactional(propagation = Propagation.REQUIRES_NEW)
+@Rollback
 public class ArrivageRepositoryTest {
 	
 	@Autowired
@@ -56,7 +62,6 @@ public class ArrivageRepositoryTest {
 
         this.arrivageRepository.add(arrivage);
 
-        assertEquals(1, arrivageRepository.allArrivages().size());
 
         Arrivage foundArrivage = arrivageRepository.arrivgeOfId(arrivage.arrivageId());
 
@@ -64,7 +69,7 @@ public class ArrivageRepositoryTest {
 
     }
 
-    @Test
+    @Test(expected = EmptyResultDataAccessException.class)
     public void testRemoveArrivage() {
 
 
@@ -84,13 +89,16 @@ public class ArrivageRepositoryTest {
 
         this.arrivageRepository.add(arrivage);
 
-        assertEquals(1, arrivageRepository.allArrivages().size());
+		Arrivage foundArrivage = arrivageRepository.arrivgeOfId(arrivage.arrivageId());
 
-        this.arrivageRepository.remove(arrivage);
+		assertEquals(arrivage, foundArrivage);
 
-        assertEquals(0, arrivageRepository.allArrivages().size());
+		this.arrivageRepository.remove(arrivage);
 
-    }
+		 foundArrivage = arrivageRepository.arrivgeOfId(arrivage.arrivageId());
+
+
+	}
 
     @Test
     public void testArrivageOfId() {
@@ -111,7 +119,6 @@ public class ArrivageRepositoryTest {
 
         this.arrivageRepository.add(arrivage);
 
-        assertEquals(1, arrivageRepository.allArrivages().size());
 
         Arrivage foundArrivage = arrivageRepository.arrivgeOfId(arrivage.arrivageId());
 

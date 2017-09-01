@@ -298,7 +298,7 @@ public class StockTest extends StockCommonTest {
                         new StockId("ST12345"),
                         new ProductId("PR12345"));
 
-        assertEquals(true, stock.isAvailable());
+        assertEquals(false, stock.isAvailable());
 
         stock.unAvailable();
 
@@ -310,26 +310,6 @@ public class StockTest extends StockCommonTest {
     }
 
 
-    @Test
-    public void testThresholdReachedOn() {
-
-        Stock stock =
-                new Stock(
-                        new StockId("ST12345"),
-                        new ProductId("PR12345"));
-
-        assertEquals(null, stock.dateStockThresholdReached());
-
-        ZonedDateTime dateStockThresholdReached = ZonedDateTime.now();
-
-        stock.thresholdReachedOn(dateStockThresholdReached);
-
-        assertEquals(dateStockThresholdReached, stock.dateStockThresholdReached());
-
-        this.expectedEvents(1);
-        this.expectedEvent(StockCreated.class);
-
-    }
 
     @Test
     public void testAdjustThreshold() {

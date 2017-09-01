@@ -15,7 +15,7 @@ import com.dddtraining.inventory.domain.model.stock.Quantity;
 import com.dddtraining.inventory.domain.model.stock.StockId;
 
 //@Repository
-public class MockArrivageRepository implements ArrivageRepository {
+public class MockArrivageRepository {
 
 
     private Set<Arrivage> arrivages;

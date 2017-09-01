@@ -1,24 +1,19 @@
 package com.dddtraining.inventory.domain.model.stock;
 
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import java.io.Serializable;
+
+import javax.persistence.*;
 
 import com.dddtraining.inventory.domain.model.arrivage.ArrivageId;
 import com.dddtraining.inventory.domain.model.arrivage.LifeSpanTime;
+import com.dddtraining.inventory.domain.model.common.ConcurrencySafeEntity;
 import com.dddtraining.inventory.domain.model.product.ProductId;
 
-//Truely a value object 
+//Trully a value object to be improved
 @Entity
-public class StockProductArrivage {
+public class StockProductArrivage extends ConcurrencySafeEntity{
 
-
-	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	private long id;
-	@Embedded
+    @Embedded
     private ArrivageId arrivageId;
 	@Embedded
     private ProductId productId;
@@ -27,6 +22,7 @@ public class StockProductArrivage {
     private int ordering;
 	@Embedded
     private Quantity quantity;
+
 
 
     public StockProductArrivage(ProductId aProductId, ArrivageId anArrivageId, LifeSpanTime aLifeSpanTime, Quantity quantity, int anOrdering) {
@@ -121,6 +117,7 @@ public class StockProductArrivage {
                 ", lifeSpanTime=" + lifeSpanTime +
                 ", ordering=" + ordering +
                 ", quantity=" + quantity +
+                ", hibernate id =" + this.id() +
                 '}';
     }
 
@@ -147,12 +144,16 @@ public class StockProductArrivage {
 
 
 	public StockProductArrivage createFrom(StockProductArrivage aStockProductArrivage) {
-		// TODO Auto-generated method stub
+
+
+        System.out.println("\n\nIn Create From aStockProductArrivage = "+aStockProductArrivage.toString());
+        System.out.println("\n\nIn Create From this  = "+this.toString());
+
 		return new StockProductArrivage(
-				this.productId(), 
-				aStockProductArrivage.arrivageId(), 
-				this.lifeSpanTime(), 
-				aStockProductArrivage.quantity(), 
+				this.productId(),
+				aStockProductArrivage.arrivageId(),
+				this.lifeSpanTime(),
+				aStockProductArrivage.quantity(),
 				this.ordering());
 	}
 
@@ -160,39 +161,8 @@ public class StockProductArrivage {
 	public StockProductArrivage() {
 		super();
 	}
-	//
 
 
-	public long getId() {
-		return id;
-	}
 
 
-	public ArrivageId getArrivageId() {
-		return arrivageId;
-	}
-
-
-	public ProductId getProductId() {
-		return productId;
-	}
-
-
-	public LifeSpanTime getLifeSpanTime() {
-		return lifeSpanTime;
-	}
-
-
-	public int getOrdering() {
-		return ordering;
-	}
-
-
-	public Quantity getQuantity() {
-		return quantity;
-	}
-	
-	
-	
-	
 }

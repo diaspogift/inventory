@@ -12,6 +12,8 @@ import com.dddtraining.inventory.domain.model.product.ProductId;
 import com.dddtraining.inventory.domain.model.stock.Stock;
 import com.dddtraining.inventory.domain.model.stock.StockId;
 import com.dddtraining.inventory.domain.model.stock.StockRepository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class JpaStockRepository implements StockRepository {
@@ -35,14 +37,17 @@ public class JpaStockRepository implements StockRepository {
 
     public Stock stockOfId(StockId aStockId) {
 
-    	
+    	System.out.println("\n In stockOfId aStockId = "+aStockId);
     	
     	Stock stock = 
         		this.entityManager()
         		.createQuery("select stock from Stock as stock where stock.stockId = :stockId", Stock.class)
         		.setParameter("stockId", aStockId)
         		.getSingleResult();
-        		
+
+
+        System.out.println("\n In stockOfId stock = "+stock);
+
         return stock;
     }
 

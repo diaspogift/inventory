@@ -8,7 +8,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dddtraining.inventory.domain.model.arrivage.ArrivageRepository;
@@ -20,7 +23,8 @@ import com.dddtraining.inventory.domain.model.stock.StockRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@Transactional
+@Transactional(propagation = Propagation.REQUIRES_NEW)
+@Rollback
 public class StockRepositoryTest {
 	
 	@Autowired
@@ -43,7 +47,6 @@ public class StockRepositoryTest {
 
         this.stockRepository.add(stock);
 
-        assertEquals(1, this.stockRepository.allStocks().size());
 
         Stock savedStock = this.stockRepository.stockOfId(stockId);
 
@@ -51,7 +54,7 @@ public class StockRepositoryTest {
 
     }
 
-    @Test
+    @Test(expected = EmptyResultDataAccessException.class)
     public void testRemoveStock() {
 
     	ProductId productId = this.productRepository.nextIdentity();
@@ -62,12 +65,14 @@ public class StockRepositoryTest {
 
         this.stockRepository.add(stock);
 
-        assertEquals(1, this.stockRepository.allStocks().size());
+        Stock foundStock = this.stockRepository.stockOfId(stockId);
 
+        assertEquals(stock,foundStock );
 
         stockRepository.remove(stock);
 
-        assertEquals(0, this.stockRepository.allStocks().size());
+        foundStock = this.stockRepository.stockOfId(stockId);
+
 
     }
 
@@ -81,7 +86,6 @@ public class StockRepositoryTest {
 
         this.stockRepository.add(stock);
 
-        assertEquals(1, stockRepository.allStocks().size());
 
         Stock foundStock = stockRepository.stockOfId(stockId);
 
@@ -130,11 +134,7 @@ public class StockRepositoryTest {
         Collection<Stock> acitiveStocks = this.stockRepository.allStocks();
         assertEquals(3, acitiveStocks.size());
         
-        try {
-			Thread.sleep(10000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+
 
     }
 

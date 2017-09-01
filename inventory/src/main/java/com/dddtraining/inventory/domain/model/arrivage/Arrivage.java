@@ -9,18 +9,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import com.dddtraining.inventory.domain.model.common.ConcurrencySafeEntity;
 import com.dddtraining.inventory.domain.model.common.DomainEventPublisher;
 import com.dddtraining.inventory.domain.model.product.ProductId;
 import com.dddtraining.inventory.domain.model.stock.Quantity;
 import com.dddtraining.inventory.domain.model.stock.StockId;
 
 @Entity
-public class Arrivage {
+public class Arrivage extends ConcurrencySafeEntity {
 
-	
-	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	private long id;
+
 	@Embedded
     private ArrivageId arrivageId;
 	@Embedded
@@ -57,13 +55,8 @@ public class Arrivage {
 
     /*** Business logic***/
     public void changeUnitPrice(BigDecimal aUnitPrice) {
-        if (aUnitPrice == null) {
-            throw new IllegalArgumentException("Invalid price");
-        }
-
-        if (aUnitPrice.doubleValue() <= 0) {
-            throw new IllegalArgumentException("Invalid negative price");
-        }
+        this.assertArgumentNotNull(aUnitPrice, "Unit price required");
+        this.assertArgumentPositif(aUnitPrice, "Positif unit price required");
 
         this.setUnitPrice(aUnitPrice);
     }
@@ -71,10 +64,8 @@ public class Arrivage {
     
     //TO test
     public void changeQuantity(int aValue) {
-        if (aValue <= 0) {
-            throw new IllegalArgumentException("Invalid negative quantity");
-        }
 
+        this.assertArgumentPositif(aValue, "Positif quantity required.");
         this.setQuantity(new Quantity(aValue));
         
 		
@@ -91,11 +82,10 @@ public class Arrivage {
     
     
     //TO test
-	public void udpdateArrivageQuantity(int quantity2) {
-		if(quantity2 < 0)
-			throw new IllegalArgumentException("Invalid quantity!");
-		
-		this.setQuantity(new Quantity(quantity2));
+	public void udpdateArrivageQuantity(int aQuantity) {
+        this.assertArgumentPositif(aQuantity, "Positif quantity required.");
+
+		this.setQuantity(new Quantity(aQuantity));
 		
 		if(this.quantity().value() == 0 )
 			this.setRunOut(true);

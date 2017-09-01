@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dddtraining.inventory.application.command.AssignedStockCommand;
@@ -137,6 +138,10 @@ public class ProductApplicationService {
     public Arrivage addProductArrivage(RegisterProductArrivageCommand aCommand) {
 
 
+        System.out.println("\n In addProduct Arrivage aCommand == "+aCommand);
+        System.out.println("\n In addProduct Arrivage aCommand == "+aCommand);
+        System.out.println("\n In addProduct Arrivage aCommand == "+aCommand);
+
         DomainEventSubscriber<NewArrivageCreated> subscriber =
                 new DomainEventSubscriber<NewArrivageCreated>() {
                     @Override
@@ -158,6 +163,8 @@ public class ProductApplicationService {
                         message.put("occurredOn", aDomainEvent.occurredOn().toString());
 
                         jmsTemplate.convertAndSend("NEW_ARRIVAGE_CREATED_QUEUE", message);
+
+                        System.out.println(" \nNewArrivageCreated = "+aDomainEvent.toString());
 
 
                     }
@@ -226,6 +233,10 @@ public class ProductApplicationService {
 
         ProductId productId = new ProductId(aCommand.productId());
 
+
+
+        System.out.println(" \n In creatProductStock aCommand = "+aCommand.toString());
+
         Product product =
                 this.productRepository()
                         .productOfId(productId);
@@ -236,6 +247,7 @@ public class ProductApplicationService {
                             new StockId(aCommand.stockId()),
                             aCommand.theshold());
 
+            System.out.println(" \n In product != null, creatProductStock stockId = "+stock.stockId());
 
             this.stockRepository().add(stock);
         }
@@ -297,6 +309,8 @@ public class ProductApplicationService {
                     	message.put("stockId", aDomainEvent.stockId().id());
                     	message.put("productId", aDomainEvent.productId().id());
                     	message.put("quantity", String.valueOf(aDomainEvent.quantity()));
+                    	
+                    	
                     	JSONArray jsonArray = new JSONArray();
                     	
                     	for(StockProductArrivage next : aDomainEvent.allModifiedArrivages()){
@@ -304,7 +318,15 @@ public class ProductApplicationService {
 
                     		JSONObject jsonObject = new JSONObject();
                             try {
-                                jsonObject.put("changedArrivage", new JsonStockProductArrivageRep(next));
+                            	JSONObject jsobj = new JSONObject();
+                            	jsobj.put("arrivageId", next.arrivageId().id());
+                            	jsobj.put("productId", next.productId().id());
+                            	jsobj.put("lifeSpanTimeStartDate", next.lifeSpanTime().getStartDate());
+                            	jsobj.put("lifeSpanTimeEndDate", (next.lifeSpanTime().endDate() != null)?
+                            			next.lifeSpanTime().endDate():"");
+                            	jsobj.put("ordering", next.ordering());
+                            	jsobj.put("quantity", next.quantity().getValue());
+                                jsonObject.put("changedArrivage", jsobj);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -318,6 +340,9 @@ public class ProductApplicationService {
                     	message.put("occurredOn", String.valueOf(aDomainEvent.occurredOn()));
 
                     	jmsTemplate.convertAndSend("STOCK_QUANTITY_CHANGED_QUEUE", message);
+
+                        System.out.println(" \nStockQuantityChanged = "+aDomainEvent.toString());
+
                     }
 
                     @Override
@@ -347,6 +372,8 @@ public class ProductApplicationService {
     @Transactional
     public void assignedStockToProduct(AssignedStockCommand aCommand) {
 
+        System.out.println("\n\n In assignedStockToProduct aCommand = "+aCommand);
+
 
 
         DomainEventSubscriber<ProductStockAssigned> subscriber =
@@ -375,20 +402,29 @@ public class ProductApplicationService {
         DomainEventPublisher.instance().subscribe(subscriber);
 
 
+        System.out.println("\n\n In assignedStockToProduct aCommand.productId() = "+aCommand.productId());
+
 
         Product product =
                 this.productRepository()
                         .productOfId(
                                 new ProductId(aCommand.productId()));
 
+
+
+        System.out.println("\n\n In assignedStockToProduct product= "+product);
+
         Stock stock = new Stock(
                 new StockId(aCommand.stockId()),
                 new ProductId(aCommand.productId()));
 
 
+        System.out.println("\n\n In assignedStockToProduct stock= "+product);
 
 
         if (stock != null && product != null) {
+
+
             product.assignStock(stock);
         }
 

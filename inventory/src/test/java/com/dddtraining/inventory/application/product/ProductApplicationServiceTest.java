@@ -6,9 +6,12 @@ import static org.junit.Assert.assertNotNull;
 
 import java.math.BigDecimal;
 
+import com.dddtraining.inventory.application.ApplicationServiceCommonTest;
+import com.dddtraining.inventory.application.ApplicationServiceRegistry;
+import com.dddtraining.inventory.domain.model.DomainRegistry;
+import com.dddtraining.inventory.domain.model.stock.Quantity;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -16,55 +19,43 @@ import com.dddtraining.inventory.application.command.CreateProductStockCommand;
 import com.dddtraining.inventory.application.command.DecrementProductStockCommand;
 import com.dddtraining.inventory.application.command.RegisterProductArrivageCommand;
 import com.dddtraining.inventory.application.command.RegisterProductCommand;
-import com.dddtraining.inventory.application.stock.StockApplicationService;
 import com.dddtraining.inventory.domain.model.arrivage.Arrivage;
 import com.dddtraining.inventory.domain.model.arrivage.ArrivageId;
-import com.dddtraining.inventory.domain.model.arrivage.ArrivageRepository;
 import com.dddtraining.inventory.domain.model.product.Product;
 import com.dddtraining.inventory.domain.model.product.ProductId;
-import com.dddtraining.inventory.domain.model.product.ProductRepository;
 import com.dddtraining.inventory.domain.model.stock.Stock;
 import com.dddtraining.inventory.domain.model.stock.StockId;
-import com.dddtraining.inventory.domain.model.stock.StockRepository;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.NoResultException;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class ProductApplicationServiceTest {
-
-
-    @Autowired
-    private ProductApplicationService productApplicationService;
-    @Autowired
-    private StockApplicationService stockApplicationService;
-    @Autowired
-    private ProductRepository productRepository;
-    @Autowired
-    private ArrivageRepository arrivageRepository;
-    @Autowired
-    private StockRepository stockRepository;
+public class ProductApplicationServiceTest extends ApplicationServiceCommonTest {
 
 
     @Test
     public void testAddNewProduct() {
 
 
-        RegisterProductCommand registerProductCommand =
-                new RegisterProductCommand(
-                        "PROD_OF_ID_1",
-                        "Product name",
-                        "Product desciption"
-                );
+    	Product product1 =  this.product1();
 
-        productApplicationService.addProduct(registerProductCommand);
 
-        Product newProduct =
-                this.productRepository
-                        .productOfId(
-                                new ProductId("PROD_OF_ID_1"));
+		ApplicationServiceRegistry.productApplicationService()
+				.addProduct(new RegisterProductCommand(
+						product1.productId().id(),
+						product1.name(),
+						product1.description()));
 
-        assertNotNull(newProduct);
-        assertEquals("Product name", newProduct.name());
-        assertEquals("Product desciption", newProduct.description());
+
+		Product addedProduct = DomainRegistry.productRepository().productOfId(product1.productId());
+
+        assertNotNull(addedProduct);
+        assertEquals(product1, addedProduct);
+
+		this.entityManager().getTransaction().begin();
+		this.entityManager().createQuery("delete from Product").executeUpdate();
+		this.entityManager().getTransaction().commit();
 
 
     }
@@ -72,97 +63,80 @@ public class ProductApplicationServiceTest {
     @Test
     public void testAddProductArrivage() {
 
+		Product product = this.product1();
+		Stock stock = this.stockProduct1();
+		Arrivage arrivage1 = this.arrivage1();
 
-    	ProductId productId = this.productRepository().nextIdentity();
-    	StockId stockId = this.stockRepository().nextIdentity();
-    	ArrivageId arrivageId1 = this.arrivageRepository().nextIdentity();
-    	ArrivageId arrivageId2 = this.arrivageRepository().nextIdentity();
-    	
-    	RegisterProductCommand registerProductCommand = new RegisterProductCommand(productId.id(), "PRODUCT NAME", "PRODUCT DESCRIPTION");
-    
-    	
-    	this.productApplicationService().addProduct(registerProductCommand);
-    
-    	this.productApplicationService().creatProductStock(new CreateProductStockCommand(stockId.id(), productId.id(), 100));
-    	
-    	this.productApplicationService()
-    	.addProductArrivage(
-    			new RegisterProductArrivageCommand(
-    					productId.id(), arrivageId1.id(),
-    					250,
-    					new BigDecimal(150),
-    					"ARRIVAGE DESCRPTION 1"));
-    	
-    	try {
-			Thread.sleep(2000l);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-    	
-    	
-    	
-    	this.productApplicationService()
-    	.addProductArrivage(
-    			new RegisterProductArrivageCommand(
-    					productId.id(), arrivageId2.id(),
-    					300,
-    					new BigDecimal(250),
-    					"ARRIVAGE DESCRPTION 2"));
-    	
-      	try {
-    			Thread.sleep(2000l);
-    	} catch (InterruptedException e) {
-    			e.printStackTrace();
-    	}
-      	
-        Stock modifiedStock = 
-        		this.stockRepository().stockOfId(stockId);
+
+
+		this.entityManager().getTransaction().begin();
+		this.entityManager().persist(product);
+		this.entityManager().persist(stock);
+		this.entityManager().getTransaction().commit();
+
+
+
+		ApplicationServiceRegistry.productApplicationService()
+				.addProductArrivage(
+						new RegisterProductArrivageCommand(
+								arrivage1.productId().id(),
+								arrivage1.arrivageId().id(),
+								arrivage1.quantity().value(),
+								arrivage1.unitPrice(),
+								"ARRIVAGE 1 DESCRPTION"
+						));
+
+
         Arrivage addedArrivage1 = 
-        		this.arrivageRepository().arrivgeOfId(arrivageId1);
-        Arrivage addedArrivage2 = 
-        		this.arrivageRepository().arrivgeOfId(arrivageId2);
-        
-        assertEquals(550, modifiedStock.quantity().value());
-        assertEquals(250, addedArrivage1.quantity().value());
-        assertEquals(300, addedArrivage2.quantity().value());
-        
-        
-        
-        
-    }
+        		DomainRegistry.arrivageRepository().arrivgeOfId(arrivage1.arrivageId());
+
+
+		assertNotNull(addedArrivage1);
+		assertEquals(arrivage1, addedArrivage1);
+
+
+
+		this.entityManager().getTransaction().begin();
+		this.entityManager().createQuery("delete from Product").executeUpdate();
+		this.entityManager().createQuery("delete from Arrivage").executeUpdate();
+		this.entityManager().createQuery("delete from Stock").executeUpdate();
+		this.entityManager().createQuery("delete from StockProductArrivage").executeUpdate();
+		this.entityManager().getTransaction().commit();
+
+
+
+	}
 
     @Test
     public void testCreatProductStock() {
-    	
-    	
-    	ProductId productId = this.productRepository().nextIdentity();
-    	StockId stockId = this.stockRepository().nextIdentity();
-    	
-    	RegisterProductCommand registerProductCommand = new RegisterProductCommand(productId.id(), "PRODUCT NAME", "PRODUCT DESCRIPTION");
-    
-    	
-    	this.productApplicationService().addProduct(registerProductCommand);
-    
-    	this.productApplicationService().creatProductStock(new CreateProductStockCommand(stockId.id(), productId.id(), 100));
-    	
-    	
-    	try {
-			Thread.sleep(2000l);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-    	
-    	Product product = 
-    			this.productApplicationService()
-    			.product(productId.id());
-    	
-    	Stock stock = 
-    			this.stockApplicationService.stock(stockId.id());
-    	
-    	assertEquals(stock.stockId(), product.stockId());
+
+
+		this.entityManager().getTransaction().begin();
+		this.entityManager().persist(this.product1);
+		this.entityManager().getTransaction().commit();
+
+
+		ApplicationServiceRegistry.productApplicationService()
+				.creatProductStock(
+						new CreateProductStockCommand(
+								this.stockId1.id(),
+								this.productId1.id(),
+								1000));
 
 
 
+		Stock stock = DomainRegistry.stockRepository().stockOfId(stockId1);
+
+
+		assertNotNull(stock);
+		assertEquals(stock.stockId(), stockId1);
+		assertEquals(stock.productId(), this.product1.productId());
+
+
+		this.entityManager().getTransaction().begin();
+		this.entityManager().createQuery("delete from Product").executeUpdate();
+		this.entityManager().createQuery("delete from Stock").executeUpdate();
+		this.entityManager().getTransaction().commit();
 
     }
 
@@ -171,102 +145,46 @@ public class ProductApplicationServiceTest {
 
     @Test
     public void testDecrementProductStock() {
-    	
-    	
-    	ProductId productId = this.productRepository().nextIdentity();
-    	StockId stockId = this.stockRepository().nextIdentity();
-    	ArrivageId arrivageId1 = this.arrivageRepository().nextIdentity();
-    	ArrivageId arrivageId2 = this.arrivageRepository().nextIdentity();
-    	
-    	RegisterProductCommand registerProductCommand = new RegisterProductCommand(productId.id(), "PRODUCT NAME", "PRODUCT DESCRIPTION");
-    
-    	
-    	this.productApplicationService().addProduct(registerProductCommand);
-    
-    	this.productApplicationService().creatProductStock(new CreateProductStockCommand(stockId.id(), productId.id(), 100));
-    	
-    	this.productApplicationService()
-    	.addProductArrivage(
-    			new RegisterProductArrivageCommand(
-    					productId.id(), arrivageId1.id(),
-    					250,
-    					new BigDecimal(150),
-    					"ARRIVAGE DESCRPTION 1"));
-    	
-    	try {
-			Thread.sleep(2000l);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-    	
-    	
-    	
-    	this.productApplicationService()
-    	.addProductArrivage(
-    			new RegisterProductArrivageCommand(
-    					productId.id(), arrivageId2.id(),
-    					300,
-    					new BigDecimal(250),
-    					"ARRIVAGE DESCRPTION 2"));
-    	
-      	try {
-    			Thread.sleep(2000l);
-    	} catch (InterruptedException e) {
-    			e.printStackTrace();
-    	}
-    	
-    	
-      	
-      	
-        this.productApplicationService
+
+
+		this.stockProduct1.addNewStockProductArrivage(this.arrivage1);
+		this.stockProduct1.addNewStockProductArrivage(this.arrivage2);
+
+		this.entityManager().getTransaction().begin();
+		this.entityManager().persist(this.product1());
+		this.entityManager().persist(this.arrivage1());
+		this.entityManager().persist(this.arrivage2());
+		this.entityManager().persist(this.stockProduct1());
+		this.entityManager().getTransaction().commit();
+
+
+        ApplicationServiceRegistry.productApplicationService()
                 .decrementProductStock(
                 		 new DecrementProductStockCommand(
                                  350,
-                                 productId.id()));
-        
-        
-        
-      	try {
-    			Thread.sleep(5000l);
-    	} catch (InterruptedException e) {
-    			e.printStackTrace();
-    	}
-        
+                                  productId1.id()));
+
+
         Stock modifiedStock = 
-        		this.stockRepository().stockOfId(stockId);
-        Arrivage modifiedArrivage1 = 
-        		this.arrivageRepository().arrivgeOfId(arrivageId1);
-        Arrivage modifiedArrivage2 = 
-        		this.arrivageRepository().arrivgeOfId(arrivageId2);
+        		DomainRegistry.stockRepository().stockOfId(stockProduct1.stockId());
+
         
         
         assertEquals(200, modifiedStock.quantity().value());
-        assertEquals(0, modifiedArrivage1.quantity().value());
-        assertEquals(200, modifiedArrivage2.quantity().value());
 
 
-        
+		this.entityManager().getTransaction().begin();
+		this.entityManager().createQuery("delete from Product").executeUpdate();
+		this.entityManager().createQuery("delete from Arrivage").executeUpdate();
+		this.entityManager().createQuery("delete from Stock").executeUpdate();
+		this.entityManager().createQuery("delete from StockProductArrivage").executeUpdate();
+		this.entityManager().getTransaction().commit();
        
 
 
 
     }
 
-	public ProductApplicationService productApplicationService() {
-		return productApplicationService;
-	}
-
-	public ProductRepository productRepository() {
-		return productRepository;
-	}
-
-	public ArrivageRepository arrivageRepository() {
-		return arrivageRepository;
-	}
-
-	public StockRepository stockRepository() {
-		return stockRepository;
-	}
 
 
 }

@@ -1,79 +1,39 @@
 package com.dddtraining.inventory.domain.model.product;
 
+import com.dddtraining.inventory.domain.model.common.AbstractId;
+
+import java.io.Serializable;
+
+import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public final class ProductId {
+@AttributeOverride(name = "id", column = @Column(name = "product_id"))
+public class ProductId extends AbstractId{
 
-	@Column(name="PRODUCT_ID")
-    private String id;
+
 
     public ProductId(String anId) {
-        this();
-
-        if (anId == null) {
-            throw new IllegalArgumentException("Null IDs are invalid!");
-
-        }
-        if (anId.isEmpty()) {
-            throw new IllegalArgumentException("Empty IDs are invalid!");
-        }
-
-        this.setId(anId);
+       super(anId);
     }
 
     public ProductId() {
         super();
     }
 
-    public String id() {
-        return id;
-    }
-
-    private void setId(String id) {
-        this.id = id;
+    @Override
+    protected int hashOddValue() {
+        return 0;
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        return result;
+    protected int hashPrimeValue() {
+        return 0;
     }
-
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        ProductId other = (ProductId) obj;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        return true;
-    }
+    protected void validateId(String anId) {
 
-    @Override
-    public String toString() {
-        return "ProductId{" +
-                "id='" + id + '\'' +
-                '}';
     }
-    //
-
-	public String getId() {
-		return id;
-	}
-    
-    
-        
-    
     
 }

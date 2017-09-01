@@ -1,16 +1,21 @@
 package com.dddtraining.inventory.domain.model.stock;
 
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.Set;
 
 import com.dddtraining.inventory.domain.model.common.DomainEvent;
 import com.dddtraining.inventory.domain.model.product.ProductId;
 
-public class StockQuantityChanged implements DomainEvent {
+public class StockQuantityChanged implements DomainEvent, Serializable{
 
 
 
-    private StockId stockId;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private StockId stockId;
     private ProductId productId;
     private Quantity quantity;
     private Set<StockProductArrivage> allModifiedArrivages;

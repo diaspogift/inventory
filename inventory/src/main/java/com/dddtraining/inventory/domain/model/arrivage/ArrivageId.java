@@ -1,68 +1,33 @@
 package com.dddtraining.inventory.domain.model.arrivage;
 
+import com.dddtraining.inventory.domain.model.common.AbstractId;
+
+import java.io.Serializable;
+
+import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class ArrivageId {
-
-	@Column(name="ARRIVAGE_ID")
-    private String id;
+@AttributeOverride(name = "id", column = @Column(name = "arrivage_id"))
+public class ArrivageId extends AbstractId{
 
     public ArrivageId(String anId) {
-        this.setId(anId);
+        super(anId);
     }
-
-
-    private void setId(String anId) {
-        this.id = anId;
-    }
-
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        ArrivageId other = (ArrivageId) obj;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "ArrivageId{" +
-                "id='" + id + '\'' +
-                '}';
-    }
-
-    public String id() {
-
-        return this.id;
-    }
-
 
 	public ArrivageId() {
 		super();
 	}
-    
-    //
-	
-    
-    
+
+    @Override
+    protected int hashOddValue() {
+        return 0;
+    }
+
+    @Override
+    protected int hashPrimeValue() {
+        return 0;
+    }
+
 }

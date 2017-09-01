@@ -16,6 +16,8 @@ import com.dddtraining.inventory.application.command.RegisterNewStockProductArri
 import com.dddtraining.inventory.application.product.ProductApplicationService;
 import com.dddtraining.inventory.application.stock.StockApplicationService;
 
+import javax.persistence.NoResultException;
+
 @Component
 public class ArrivageEventListener {
 	
@@ -44,6 +46,7 @@ public class ArrivageEventListener {
         String lifeSpanTimeEndDate = mesage.get("lifeSpanTimeEndDate");
         String enventVersion = mesage.get("enventVersion");
         String occurredOn = mesage.get("occurredOn");
+
 
 
         this.stockApplicationService()

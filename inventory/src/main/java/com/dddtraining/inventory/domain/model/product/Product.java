@@ -13,17 +13,14 @@ import javax.persistence.Id;
 import com.dddtraining.inventory.domain.model.arrivage.Arrivage;
 import com.dddtraining.inventory.domain.model.arrivage.ArrivageId;
 import com.dddtraining.inventory.domain.model.arrivage.NewArrivageCreated;
+import com.dddtraining.inventory.domain.model.common.ConcurrencySafeEntity;
 import com.dddtraining.inventory.domain.model.common.DomainEventPublisher;
 import com.dddtraining.inventory.domain.model.stock.Quantity;
 import com.dddtraining.inventory.domain.model.stock.Stock;
 import com.dddtraining.inventory.domain.model.stock.StockId;
 
 @Entity
-public class Product {
-	
-	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	private long id;
+public class Product extends ConcurrencySafeEntity {
 
 	@Embedded
     private ProductId productId;
@@ -112,10 +109,7 @@ public class Product {
 
     public Arrivage createNewArrivage(ArrivageId anArrivageId, Quantity aQuantity, BigDecimal aUnitPrice, String aDescription) {
 
-
-        if (this.hasNoStock()) {
-            throw new IllegalStateException("Invalid state");
-        }
+        this.assertStateFalse(this.hasNoStock(), "Product has no stock associated.");
 
         Arrivage arrivage =
                 new Arrivage(
@@ -126,8 +120,9 @@ public class Product {
                         aUnitPrice,
                         aDescription);
 
-
-        //NewArrivageCreated domain event
+        System.out.println("\n In createNewArrivage = ");
+        System.out.println("\n In createNewArrivage = ");
+        System.out.println("\n In createNewArrivage = ");
 
         DomainEventPublisher
                 .instance()
@@ -159,6 +154,10 @@ public class Product {
     public void assignStock(Stock aStock) {
 
 
+        System.out.println(" \n in assignStock aStock ="+aStock);
+        System.out.println(" \n in assignStock aStock ="+aStock);
+        System.out.println(" \n in assignStock aStock ="+aStock);
+
         if (this.hasNoStock()) {
             this.setStockId(aStock.stockId());
             this.elevateAvailabilityStatus(AvailabilityStatus.STOCK_PROVIDED);
@@ -189,23 +188,13 @@ public class Product {
 
     //*** Getters and Setters ***//
     private void setProductId(ProductId aProductId) {
-
-        if (aProductId == null) {
-            System.out.println(this.stockId() == null);
-
-
-            throw new IllegalArgumentException("Invalid ProductId provided");
-        }
+        this.assertArgumentNotNull(aProductId, "ProductId is required.");
         this.productId = aProductId;
     }
 
     private void setStockId(StockId aStockId) {
-
-        if (aStockId == null) {
-            throw new IllegalArgumentException("Invalid StockId provided");
-        }
+        this.assertArgumentNotNull(aStockId, "StockId is required.");
         this.stockId = aStockId;
-
     }
 
     private void setName(String aName) {

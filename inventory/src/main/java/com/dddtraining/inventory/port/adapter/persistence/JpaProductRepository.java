@@ -12,6 +12,8 @@ import com.dddtraining.inventory.domain.model.product.AvailabilityStatus;
 import com.dddtraining.inventory.domain.model.product.Product;
 import com.dddtraining.inventory.domain.model.product.ProductId;
 import com.dddtraining.inventory.domain.model.product.ProductRepository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class JpaProductRepository implements ProductRepository {
@@ -21,7 +23,7 @@ public class JpaProductRepository implements ProductRepository {
 
 
     public void add(Product aProduct) {
-    	
+
     	this.entityManager().persist(aProduct);
     }
 
@@ -31,13 +33,15 @@ public class JpaProductRepository implements ProductRepository {
 
     public Product productOfId(ProductId aProductId) {
 
-		
+
+
         Product product = 
         		this.entityManager()
         		.createQuery("select product from Product as product where product.productId = :productId", Product.class)
         		.setParameter("productId", aProductId)
         		.getSingleResult();
-        		
+
+        System.out.println("Found Product in "+this.getClass().getSimpleName()+" product =  "+product);
  
         return product;
     }

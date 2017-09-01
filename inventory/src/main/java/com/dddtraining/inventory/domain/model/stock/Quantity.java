@@ -1,11 +1,19 @@
 package com.dddtraining.inventory.domain.model.stock;
 
+import java.io.Serializable;
+
 import javax.persistence.Embeddable;
+import javax.persistence.Embedded;
 
 @Embeddable
-public class Quantity {
+public class Quantity implements Serializable{
 
-    private int value;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private int value;
+
 
     public Quantity(int aValue) {
         super();

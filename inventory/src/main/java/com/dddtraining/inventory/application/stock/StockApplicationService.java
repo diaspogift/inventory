@@ -105,6 +105,9 @@ public class StockApplicationService {
     public void addProductArrivageToStock(RegisterNewStockProductArrivageCommand aCommand) {
 
 
+        System.out.println("\n In addProductArrivageToStock Adding Arrivage to stock");
+        System.out.println("\n Adding Arrivage to stock");
+        System.out.println("\n Adding Arrivage to stock");
         Product product =
                 this.productRepository()
                         .productOfId(
@@ -242,13 +245,19 @@ public class StockApplicationService {
     			this.stockRepository()
     			.stockOfId(
     					new StockId(aCommand.stockId()));
-    	
-    	if(stock != null)
+
+        System.out.println("\n adjustStockArrivageQuantity the stock is = "+stock.toString());
+
+
+        if(stock != null){
+
+            stock.updateProductArrivage(
+                    new StockProductArrivage(
+                            new ArrivageId(aCommand.arrivageId()),
+                            new Quantity(aCommand.quantity())));
+        }
     		
-    		stock.updateProductArrivage(
-    				new StockProductArrivage(
-    						new ArrivageId(aCommand.arrivageId()),
-    						new Quantity(aCommand.quantity())));
+
 			
 	}
 

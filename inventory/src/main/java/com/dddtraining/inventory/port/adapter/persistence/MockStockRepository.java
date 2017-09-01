@@ -14,7 +14,7 @@ import com.dddtraining.inventory.domain.model.stock.StockId;
 import com.dddtraining.inventory.domain.model.stock.StockRepository;
 
 //@Repository
-public class MockStockRepository implements StockRepository {
+public class MockStockRepository {
 
 
     private Set<Stock> allStocks;
@@ -96,7 +96,6 @@ public class MockStockRepository implements StockRepository {
 
     }
 
-    @Override
     public StockId nextIdentity() {
         return new StockId(UUID.randomUUID().toString().toUpperCase());
     }
